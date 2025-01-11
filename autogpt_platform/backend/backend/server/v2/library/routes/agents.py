@@ -6,6 +6,8 @@ import autogpt_libs.auth.middleware
 import autogpt_libs.utils.cache
 import fastapi
 
+import backend.data
+import backend.data.graph
 import backend.server.v2.library.db
 import backend.server.v2.library.model
 import backend.server.v2.store.exceptions
@@ -38,6 +40,43 @@ async def get_library_agents(
         )
 
 
+@router.get(
+    "/agents/{store_listing_version_id}",
+    tags=["library", "private"],
+    dependencies=[fastapi.Depends(autogpt_libs.auth.middleware.auth_middleware)],
+)
+async def get_library_agent(
+    store_listing_version_id: str,
+    user_id: typing.Annotated[
+        str, fastapi.Depends(autogpt_libs.auth.depends.get_user_id)
+    ],
+) -> backend.data.graph.Graph | None:
+    """
+    Get an agent from the user's library by store listing version ID.
+
+    Args:
+        store_listing_version_id (str): ID of the store listing version to get
+        user_id (str): ID of the authenticated user
+
+    Returns:
+        backend.data.graph.Graph: Agent from the user's library
+        None: If the agent is not found in the user's library
+
+    Raises:
+        HTTPException: If there is an error getting the agent from the library
+    """
+    try:
+        agent = await backend.server.v2.library.db.get_library_agent(
+            store_listing_version_id, user_id
+        )
+        return agent
+    except Exception:
+        logger.exception("Exception occurred whilst getting library agent")
+        raise fastapi.HTTPException(
+            status_code=500, detail="Failed to get library agent"
+        )
+
+
 @router.post(
     "/agents/{store_listing_version_id}",
     tags=["library", "private"],
@@ -49,7 +88,7 @@ async def add_agent_to_library(
     user_id: typing.Annotated[
         str, fastapi.Depends(autogpt_libs.auth.depends.get_user_id)
     ],
-) -> fastapi.Response:
+) -> backend.data.graph.Graph | None:
     """
     Add an agent from the store to the user's library.
 
@@ -58,17 +97,17 @@ async def add_agent_to_library(
         user_id (str): ID of the authenticated user
 
     Returns:
-        fastapi.Response: 201 status code on success
+        backend.data.graph.Graph: Agent added to the user's library
+        None: On failure
 
     Raises:
         HTTPException: If there is an error adding the agent to the library
     """
     try:
         # Use the database function to add the agent to the library
-        await backend.server.v2.library.db.add_store_agent_to_library(
+        return await backend.server.v2.library.db.add_store_agent_to_library(
             store_listing_version_id, user_id
         )
-        return fastapi.Response(status_code=201)
 
     except backend.server.v2.store.exceptions.AgentNotFoundError:
         raise fastapi.HTTPException(

@@ -3,13 +3,14 @@
 import * as React from "react";
 import { IconPlay, StarRatingIcons } from "@/components/ui/icons";
 import { Separator } from "@/components/ui/separator";
-import BackendAPI from "@/lib/autogpt-server-api";
+import BackendAPI, { GraphMeta } from "@/lib/autogpt-server-api";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useToast } from "@/components/ui/use-toast";
 
 import useSupabase from "@/hooks/useSupabase";
-import { DownloadIcon, LoaderIcon } from "lucide-react";
+import { DownloadIcon, LoaderIcon, CheckIcon } from "lucide-react";
+import { useBackendAPI } from "@/lib/autogpt-server-api/context";
 interface AgentInfoProps {
   name: string;
   creator: string;
@@ -36,61 +37,88 @@ export const AgentInfo: React.FC<AgentInfoProps> = ({
   storeListingVersionId,
 }) => {
   const router = useRouter();
-  const api = React.useMemo(() => new BackendAPI(), []);
+  const api = useBackendAPI();
   const { user } = useSupabase();
   const { toast } = useToast();
+  const [userAgent, setUserAgent] = React.useState<GraphMeta | null>(null);
+  // Either downloading or adding to library
+  const [processing, setProcessing] = React.useState(false);
 
-  const [downloading, setDownloading] = React.useState(false);
+  React.useEffect(() => {
+    const fetchAgent = async () => {
+      try {
+        const agent = await api.getUserLibraryAgent(storeListingVersionId);
+        setUserAgent(agent);
+      } catch (error) {
+        console.error("Failed to fetch library agent:", error);
+      }
+    };
+    fetchAgent();
+  }, [api, storeListingVersionId]);
 
-  const handleAddToLibrary = async () => {
+  const handleAddToLibrary = React.useCallback(async () => {
+    if (!user || userAgent) {
+      return;
+    }
+
+    toast({
+      title: "Adding to Library",
+      description: "Adding agent to library and opening builder...",
+      duration: 2000,
+    });
+    setProcessing(true);
+
     try {
-      await api.addAgentToLibrary(storeListingVersionId);
+      const agent = await api.addAgentToLibrary(storeListingVersionId);
+      if (!agent) {
+        throw new Error();
+      }
       console.log("Agent added to library successfully");
-      router.push("/monitoring");
+      router.push(`/build?flowID=${agent.id}`);
     } catch (error) {
       console.error("Failed to add agent to library:", error);
     }
-  };
+    setProcessing(false);
+  }, [api, router, storeListingVersionId, toast, user, userAgent]);
 
-  const handleDownloadToLibrary = async () => {
-    const downloadAgent = async (): Promise<void> => {
-      setDownloading(true);
-      try {
-        const file = await api.downloadStoreAgent(storeListingVersionId);
+  const handleDownloadToLibrary = React.useCallback(async () => {
+    setProcessing(true);
+    try {
+      const file = await api.downloadStoreAgent(storeListingVersionId);
 
-        // Similar to Marketplace v1
-        const jsonData = JSON.stringify(file, null, 2);
-        // Create a Blob from the file content
-        const blob = new Blob([jsonData], { type: "application/json" });
+      // Similar to Marketplace v1
+      const jsonData = JSON.stringify(file, null, 2);
+      // Create a Blob from the file content
+      const blob = new Blob([jsonData], { type: "application/json" });
 
-        // Create a temporary URL for the Blob
-        const url = window.URL.createObjectURL(blob);
+      // Create a temporary URL for the Blob
+      const url = window.URL.createObjectURL(blob);
 
-        // Create a temporary anchor element
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `agent_${storeListingVersionId}.json`; // Set the filename
+      // Create a temporary anchor element
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `agent_${storeListingVersionId}.json`; // Set the filename
 
-        // Append the anchor to the body, click it, and remove it
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+      // Append the anchor to the body, click it, and remove it
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
 
-        // Revoke the temporary URL
-        window.URL.revokeObjectURL(url);
+      // Revoke the temporary URL
+      window.URL.revokeObjectURL(url);
 
-        toast({
-          title: "Download Complete",
-          description: "Your agent has been successfully downloaded.",
-        });
-      } catch (error) {
-        console.error(`Error downloading agent:`, error);
-        throw error;
-      }
-    };
-    await downloadAgent();
-    setDownloading(false);
-  };
+      toast({
+        title: "Download Complete",
+        description: "Your agent has been successfully downloaded.",
+        duration: 2000,
+      });
+    } catch (error) {
+      console.error(`Error downloading agent:`, error);
+      throw error;
+    }
+
+    setProcessing(false);
+  }, [api, storeListingVersionId, toast]);
 
   return (
     <div className="w-full max-w-[396px] px-4 sm:px-6 lg:w-[396px] lg:px-0">
@@ -123,29 +151,40 @@ export const AgentInfo: React.FC<AgentInfoProps> = ({
           <button
             onClick={handleAddToLibrary}
             className="inline-flex w-full items-center justify-center gap-2 rounded-[38px] bg-violet-600 px-4 py-3 transition-colors hover:bg-violet-700 sm:w-auto sm:gap-2.5 sm:px-5 sm:py-3.5 lg:px-6 lg:py-4"
+            disabled={processing || userAgent !== null}
           >
-            <IconPlay className="h-5 w-5 text-white sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
+            {processing ? (
+              <LoaderIcon className="h-5 w-5 animate-spin text-white sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
+            ) : userAgent ? (
+              <CheckIcon className="h-5 w-5 text-white sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
+            ) : (
+              <IconPlay className="h-5 w-5 text-white sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
+            )}
             <span className="font-poppins text-base font-medium text-neutral-50 sm:text-lg">
-              Add To Library
+              {processing
+                ? "Adding to Library..."
+                : userAgent
+                  ? "Already in Library"
+                  : "Add Agent to Library"}
             </span>
           </button>
         ) : (
           <button
             onClick={handleDownloadToLibrary}
             className={`inline-flex w-full items-center justify-center gap-2 rounded-[38px] px-4 py-3 transition-colors sm:w-auto sm:gap-2.5 sm:px-5 sm:py-3.5 lg:px-6 lg:py-4 ${
-              downloading
+              processing
                 ? "bg-neutral-400"
                 : "bg-violet-600 hover:bg-violet-700"
             }`}
-            disabled={downloading}
+            disabled={processing}
           >
-            {downloading ? (
+            {processing ? (
               <LoaderIcon className="h-5 w-5 animate-spin text-white sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
             ) : (
               <DownloadIcon className="h-5 w-5 text-white sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
             )}
             <span className="font-poppins text-base font-medium text-neutral-50 sm:text-lg">
-              {downloading ? "Downloading..." : "Download Agent as File"}
+              {processing ? "Downloading..." : "Download Agent as File"}
             </span>
           </button>
         )}

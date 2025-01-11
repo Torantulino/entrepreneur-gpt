@@ -400,8 +400,19 @@ export default class BackendAPI {
     return this._get("/library/agents");
   }
 
-  async addAgentToLibrary(storeListingVersionId: string): Promise<void> {
-    await this._request("POST", `/library/agents/${storeListingVersionId}`);
+  getUserLibraryAgent(
+    storeListingVersionId: string,
+  ): Promise<GraphMeta | null> {
+    return this._get(`/library/agents/${storeListingVersionId}`);
+  }
+
+  async addAgentToLibrary(
+    storeListingVersionId: string,
+  ): Promise<GraphMeta | null> {
+    return await this._request(
+      "POST",
+      `/library/agents/${storeListingVersionId}`,
+    );
   }
 
   ///////////////////////////////////////////

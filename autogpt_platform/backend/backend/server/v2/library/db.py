@@ -99,6 +99,65 @@ async def create_library_agent(
         ) from e
 
 
+async def get_library_agent(
+    store_listing_version_id: str, user_id: str
+) -> backend.data.graph.Graph | None:
+    """
+    Get user agent from the store listing version
+    """
+    logger.debug(
+        f"Getting agent by store listing version {store_listing_version_id} for user {user_id}"
+    )
+
+    try:
+        # Get store listing version to find agent
+        store_listing_version = (
+            await prisma.models.StoreListingVersion.prisma().find_unique(
+                where={"id": store_listing_version_id}, include={"Agent": True}
+            )
+        )
+
+        if not store_listing_version or not store_listing_version.Agent:
+            logger.warning(
+                f"Store listing version not found: {store_listing_version_id}"
+            )
+            raise backend.server.v2.store.exceptions.AgentNotFoundError(
+                f"Store listing version {store_listing_version_id} not found"
+            )
+
+        agent = store_listing_version.Agent
+
+        # Check if user already has this agent
+        existing_user_agent = await prisma.models.AgentGraph.prisma().find_first(
+            where={
+                "userId": user_id,
+                "id": agent.id,
+                "version": agent.version,
+            }
+        )
+
+        if existing_user_agent:
+            logger.debug(f"User {user_id} has agent {agent.id} in their library")
+            return backend.data.graph.Graph(
+                id=agent.id,
+                version=agent.version,
+                is_active=agent.isActive,
+                name=agent.name or "",
+                description=agent.description or "",
+            )
+
+        logger.debug(f"User {user_id} does not have agent {agent.id} in their library")
+        return None
+
+    except backend.server.v2.store.exceptions.AgentNotFoundError:
+        raise
+    except prisma.errors.PrismaError as e:
+        logger.error(f"Database error checking library agent: {str(e)}")
+        raise backend.server.v2.store.exceptions.DatabaseError(
+            "Failed to check library agent"
+        ) from e
+
+
 async def update_agent_version_in_library(
     user_id: str, agent_id: str, agent_version: int
 ) -> None:
@@ -158,7 +217,7 @@ async def update_library_agent(
 
 async def add_store_agent_to_library(
     store_listing_version_id: str, user_id: str
-) -> None:
+) -> backend.data.graph.Graph | None:
     """
     Finds the agent from the store listing version and adds it to the user's library (LibraryAgent table)
     if they don't already have it
@@ -206,10 +265,16 @@ async def add_store_agent_to_library(
             logger.debug(
                 f"User {user_id} already has agent {agent.id} in their library"
             )
-            return
+            return backend.data.graph.Graph(
+                id=agent.id,
+                version=agent.version,
+                is_active=agent.isActive,
+                name=agent.name or "",
+                description=agent.description or "",
+            )
 
         # Create LibraryAgent entry
-        await prisma.models.LibraryAgent.prisma().create(
+        library_agent = await prisma.models.LibraryAgent.prisma().create(
             data=prisma.types.LibraryAgentCreateInput(
                 userId=user_id,
                 agentId=agent.id,
@@ -218,6 +283,13 @@ async def add_store_agent_to_library(
             )
         )
         logger.debug(f"Added agent {agent.id} to library for user {user_id}")
+        return backend.data.graph.Graph(
+            id=library_agent.agentId,
+            version=library_agent.agentVersion,
+            is_active=agent.isActive,
+            name=agent.name or "",
+            description=agent.description or "",
+        )
 
     except backend.server.v2.store.exceptions.AgentNotFoundError:
         raise
