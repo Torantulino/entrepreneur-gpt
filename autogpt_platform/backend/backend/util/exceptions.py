@@ -4,3 +4,7 @@ class MissingConfigError(Exception):
 
 class NeedConfirmation(Exception):
     """The user must explicitly confirm that they want to proceed"""
+
+
+class NotFoundError(ValueError):
+    """The requested resource was not found in the system"""

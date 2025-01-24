@@ -31,6 +31,7 @@ model User {
 
   AgentPreset AgentPreset[]
   UserAgent   UserAgent[]
+  File        File[]
 
   Profile                Profile[]
   StoreListing           StoreListing[]
@@ -281,6 +282,9 @@ model AgentNodeExecutionInputOutput {
   data String
   time DateTime @default(now())
 
+  fileID String?
+  File   File?   @relation("AgentNodeExecutionIOFile", fields: [fileID], references: [id])
+
   // Prisma requires explicit back-references.
   referencedByInputExecId  String?
   ReferencedByInputExec    AgentNodeExecution? @relation("AgentNodeExecutionInput", fields: [referencedByInputExecId], references: [id], onDelete: Cascade)
@@ -293,6 +297,22 @@ model AgentNodeExecutionInputOutput {
   // Input and Output pin names are unique for each AgentNodeExecution.
   @@unique([referencedByInputExecId, referencedByOutputExecId, name])
   @@index([referencedByOutputExecId])
+}
+
+model File {
+  id     String @id @default(uuid())
+  userID String
+
+  OwnedByUser User @relation(fields: [userID], references: [id])
+
+  name        String
+  size        Int // file size in bytes
+  contentType String
+  createdAt   DateTime @default(now())
+
+  UsedInAgentNodeExecutionIO AgentNodeExecutionInputOutput[] @relation("AgentNodeExecutionIOFile")
+
+  @@index([id, userID])
 }
 
 // Webhook that is registered with a provider and propagates to one or more nodes

@@ -68,6 +68,7 @@ black = "^24.10.0"
 aiohappyeyeballs = "^2.4.3"
 pytest-mock = "^3.14.0"
 faker = "^33.1.0"
+google-api-python-client-stubs = "^1.28.0"
 
 [build-system]
 requires = ["poetry-core"]

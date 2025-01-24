@@ -21,6 +21,7 @@ from pydantic import BaseModel
 from backend.util import json
 from backend.util.settings import Config
 
+from ._fileio import FileMetaIO
 from .model import (
     ContributorDetails,
     Credentials,
@@ -170,6 +171,11 @@ class BlockSchema(BaseModel):
                     f"Credentials field '{field_name}' on {cls.__qualname__} "
                     "has invalid name: must be 'credentials' or *_credentials"
                 )
+
+            elif FileMetaIO is get_origin(
+                field_type := cls.model_fields[field_name].annotation
+            ):
+                cast(type[FileMetaIO], field_type).validate_file_field_schema(cls)
 
     @classmethod
     def get_credentials_fields(cls) -> dict[str, type[CredentialsMetaInput]]:

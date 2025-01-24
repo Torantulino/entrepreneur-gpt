@@ -253,6 +253,11 @@ class Secrets(UpdateTrackingModel["Secrets"], BaseSettings):
 
     encryption_key: str = Field(default="", description="Encryption key")
 
+    user_file_gcs_bucket_name: str = Field(
+        default="",
+        description="The name of the Google Cloud Storage bucket for users' files",
+    )
+
     # OAuth server credentials for integrations
     # --8<-- [start:OAuthServerCredentialsExample]
     github_client_id: str = Field(default="", description="GitHub OAuth client ID")
