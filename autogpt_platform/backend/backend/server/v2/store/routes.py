@@ -611,6 +611,11 @@ async def download_agent_file(
         store_listing_version_id=store_listing_version_id, version_id=version
     )
 
+    if not graph_data:
+        raise fastapi.HTTPException(
+            status_code=404, detail=f"Graph with {store_listing_version_id} no found"
+        )
+
     graph_data.clean_graph()
     graph_date_dict = jsonable_encoder(graph_data)
 
@@ -620,6 +625,8 @@ async def download_agent_file(
                 del obj["credentials"]
             if "creds" in obj:
                 del obj["creds"]
+            if "user_id" in obj:
+                del obj["user_id"]
 
             for value in obj.values():
                 remove_credentials(value)
