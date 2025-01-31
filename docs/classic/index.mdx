@@ -1,0 +1,126 @@
+---
+title: AutoGPT Agent
+description: "AutoGPT was conceived when OpenAI published their GPT-4 model accompanied by a paper outlining the advanced reasoning and task-solving abilities of the model."
+sidebarTitle: Introduction
+---
+
+<CardGroup cols={3}>
+  <Card title="Setup"  icon="wrench" href="/classic/setup/index" iconType="solid" horizontal/>
+  <Card title="User guide"  icon="laptop" href="/classic/usage" iconType="solid" horizontal/>
+  <Card title="GitHub"  icon="github" href="https://github.com/Significant-Gravitas/AutoGPT/tree/master/autogpt" iconType="solid" horizontal/>
+</CardGroup>
+
+**Location:** `classic/original_autogpt/` in the GitHub repo
+
+The concept was (and still is) fairly simple: let an LLM decide what to do over and over, while feeding the results of its actions back into the prompt. This allows the program to iteratively and incrementally work towards its objective.
+
+The fact that this program is able to execute actions on behalf of its user makes it an **agent**. In the case of AutoGPT, the user still has to authorize every action, but as the project progresses we'll be able to give the agent more autonomy and only require consent for select actions.
+
+AutoGPT is a **generalist agent**, meaning it is not designed with a specific task in mind. Instead, it is designed to be able to execute a wide range of tasks across many disciplines, as long as it can be done on a computer.
+
+## Coming soon
+
+* How does AutoGPT work?
+* What can I use AutoGPT for?
+* What does the future of AutoGPT look like?
+
+## AutoGPT Classic Documentation
+
+Welcome to the AutoGPT Classic Documentation.
+
+The AutoGPT project consists of four main components:
+
+* The [Agent](#agent) – also known as just "AutoGPT"
+* The [Benchmark](#benchmark) – AKA `agbenchmark`
+* The [Forge](#forge)
+* The [Frontend](#frontend)
+
+To tie these together, we also have a [CLI](#cli) at the root of the project.
+
+## <Icon icon="robot" iconType="solid" size="28"/> Agent
+<CardGroup cols={3}>
+  <Card title="About AutoGPT"  icon="book-open" href="#autogpt-agent" iconType="solid" horizontal/>
+  <Card title="Setup"  icon="wrench" href="/classic/setup/index" iconType="solid" horizontal/>
+  <Card title="Usage"  icon="laptop" href="/classic/usage" iconType="solid" horizontal/>
+</CardGroup>
+
+The heart of AutoGPT, and the project that kicked it all off: a semi-autonomous agent powered by LLMs to execute any task for you*.
+
+We continue to develop this project with the goal of providing access to AI assistance to the masses, and building the future transparently and together.
+
+* <Icon icon="lightbulb" iconType="solid" /> **Explore** \- See what AI can do and be inspired by a glimpse of the future.
+
+* <Icon icon="rocket" iconType="solid" /> **Build with us** \- We welcome any input, whether it's code or ideas for new features or improvements! Join us on [Discord](https://discord.gg/autogpt) and find out how you can join in on the action.
+
+
+\* it isn't quite there yet, but that is the ultimate goal that we are still pursuing
+
+
+## <Icon icon="bullseye" iconType="solid" size="28"/> Benchmark
+
+**[<Icon icon="file" iconType="solid" /> Readme](https://github.com/Significant-Gravitas/AutoGPT/blob/master/classic/benchmark/README.md)**
+
+Measure your agent's performance! The `agbenchmark` can be used with any agent that supports the agent protocol, and the integration with the project's [CLI](#cli) makes it even easier to use with AutoGPT and forge-based agents. The benchmark offers a stringent testing environment. Our framework allows for autonomous, objective performance evaluations, ensuring your agents are primed for real-world action.
+
+* <Icon icon="box" iconType="solid" /> [**`agbenchmark`**](https://pypi.org/project/agbenchmark/) on Pypi
+
+* <Icon icon="plug" iconType="solid" /> **Agent Protocol Standardization** \- AutoGPT uses the agent protocol from the AI Engineer Foundation to ensure compatibility with many agents, both from within and outside the project.
+
+## <Icon icon="scale-unbalanced-flip" iconType="solid" size="28"/>Forge
+
+<CardGroup cols={3}>
+  <Card title="Introduction"  icon="book-open" href="/classic/forge/getting-started/index" iconType="solid" horizontal/>
+  <Card title="Quickstart"  icon="rocket" href="https://github.com/Significant-Gravitas/AutoGPT/blob/master/QUICKSTART.md" iconType="solid" horizontal/>
+</CardGroup>
+
+Forge your own agent! The Forge is a ready-to-go template for your agent application. All the boilerplate code is already handled, letting you channel all your creativity into the things that set _your_ agent apart.
+
+* <Icon icon="screwdriver-wrench" iconType="solid" /> **Building with Ease** \- We've set the groundwork so you can focus on your agent's personality and capabilities. Comprehensive tutorials are available [here](https://aiedge.medium.com/autogpt-forge-e3de53cc58ec).
+
+
+## <Icon icon="laptop" iconType="solid" size="28"/> Frontend
+
+**[<Icon icon="file" iconType="solid" /> Readme](https://github.com/Significant-Gravitas/AutoGPT/blob/master/classic/frontend/README.md)**
+
+An easy-to-use and open source frontend for any Agent Protocol-compliant agent.
+
+*  <Icon icon="gamepad-modern" iconType="solid" />**User-Friendly Interface** \- Manage your agents effortlessly.
+
+* <Icon icon="recycle" iconType="solid"/> **Seamless Integration** \- Smooth connectivity between your agent and our benchmarking system.
+
+
+## <Icon icon="wrench" iconType="solid" size="28"/> CLI
+
+The project CLI makes it easy to use all of the components in the repo, separately or together. To install its dependencies, simply run `./run setup`, and you're ready to go!
+
+```bash
+$ ./run
+Usage: cli.py [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  agent      Commands to create, start and stop agents
+  benchmark  Commands to start the benchmark and list tests and categories
+  setup      Installs dependencies needed for your system.
+```
+Common commands:
+
+* `./run agent start autogpt` – [runs](/classic/usage#serve-agent-protocol-mode-with-ui) the AutoGPT agent
+* `./run agent create <name>` – creates a new Forge-based agent project at `agents/<name>`
+* `./run benchmark start <agent>` – benchmarks the specified agent
+
+* * *
+
+Join the AutoGPT Discord server for any queries: [discord.gg/autogpt](https://discord.gg/autogpt)
+
+### Glossary of Terms
+
+* **Repository**: Space where your project resides.
+* **Forking**: Copying a repository under your account.
+* **Cloning**: Making a local copy of a repository.
+* **Agent**: The AutoGPT you'll create and develop.
+* **Benchmarking**: Testing your agent's skills in the Forge.
+* **Forge**: The template for building your AutoGPT agent.
+* **Frontend**: The UI for tasks, logs, and task history.

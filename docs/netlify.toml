@@ -1,5 +1,0 @@
-# Netlify config for AutoGPT docs
-
-[build]
-  publish = "public/"
-  command = "mkdocs build -d public"

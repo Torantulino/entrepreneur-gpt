@@ -1,0 +1,401 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Agpt",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg",
+    "href": "https://agpt.co/"
+  },
+  "favicon": "/favicon.png",
+  "colors": {
+    "primary": "#4051b5",
+    "light": "#5387e6",
+    "dark": "#4051b5",
+    "anchors": {
+      "from": "#5387e6",
+      "to": "#d86bc4"
+    }
+  },
+  "font":{
+    "headings": {
+      "family": "FFF Acid Grotesk Regular",
+      "url": "https://acidgrotesk.folchstudio.com/",
+      "format": "woff",
+      "weight": 400
+    }
+  },
+  "background": { "style": "grid" },
+  "topbarLinks": [
+    {
+      "name": "Join the Waitlist",
+      "url": "https://agpt.co/waitlist"
+    }
+  ],
+  "topbarCtaButton": {
+    "type": "github",
+    "url": "https://github.com/Significant-Gravitas/AutoGPT"
+  },
+  "tabs": [
+    {
+      "name": "Home",
+      "url": "home"
+    },
+    {
+      "name": "AutoGPT Platform",
+      "url": "platform"
+    },
+    {
+      "name": "Integrations",
+      "url": "integrations"
+    },
+    {
+      "name": "Contribute",
+      "url": "contribute"
+    },
+    {
+      "name": "License",
+      "url": "https://github.com/Significant-Gravitas/AutoGPT/blob/master/LICENSE"
+    },
+    {
+      "name": "AutoGPT Classic",
+      "url": "classic"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "Community",
+      "icon": "discord",
+      "url": "https://discord.gg/autogpt"
+    },
+    {
+      "name": "Blog",
+      "icon": "newspaper",
+      "url": "https://agpt.co/blog"
+    },
+    {
+      "name": "Contact Us",
+      "icon": "envelope-open-text",
+      "url": "mailto:contact@agpt.co"
+    }
+  ],
+  "navigation": [
+
+    {
+      "group": "Tutorials",
+      "pages": [
+        {
+          "group": "Getting Started",
+          "pages": [
+            "platform/home",
+            "platform/getting-started",
+            "platform/edit-agent",
+            "platform/delete-agent",
+            "platform/download-agent-from-marketplace-local",
+            "platform/create-basic-agent",
+            "platform/submit-agent-to-marketplace",
+            "platform/advanced_setup",
+            "platform/agent-blocks",
+            "platform/new_blocks",
+            "platform/ollama",
+            "platform/d_id",
+            "platform/blocks/blocks",
+            "platform/contributing/tests",
+            "platform/tutorials/getting-started/quick-start-guide",
+            "platform/tutorials/getting-started/self-hosted-installation",
+            "platform/tutorials/getting-started/first-autogpt-agent",
+            "platform/tutorials/getting-started/basic-configuration"
+          ]
+        },
+        {
+          "group": "Cloud Platform Tutorials",
+          "pages": [
+            "platform/tutorials/cloud-platform-tutorials/setting-up-your-workspace",
+            "platform/tutorials/cloud-platform-tutorials/creating-your-first-project",
+            "platform/tutorials/cloud-platform-tutorials/managing-api-keys"
+          ]
+        },
+        {
+          "group": "Self-Hosted Tutorials",
+          "pages": [
+            "platform/tutorials/self-hosted-tutorials/infrastructure-setup",
+            "platform/tutorials/self-hosted-tutorials/database-configuration",
+            "platform/tutorials/self-hosted-tutorials/security-best-practices"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "How-To Guides",
+      "pages": [
+        {
+          "group": "Cloud Platform",
+          "pages": [
+            "platform/how-to-guides/cloud-platform/managing-agents",
+            "platform/how-to-guides/cloud-platform/scaling-resources",
+            "platform/how-to-guides/cloud-platform/monitoring-&-logging",
+            "platform/how-to-guides/cloud-platform/user-management",
+            "platform/how-to-guides/cloud-platform/billing-&-usage"
+          ]
+        },
+        {
+          "group": "Self-Hosted",
+          "pages": [
+            "platform/how-to-guides/self-hosted/deploymnent-strategies",
+            "platform/how-to-guides/self-hosted/backup-&-recovery",
+            "platform/how-to-guides/self-hosted/performance-tuning",
+            "platform/how-to-guides/self-hosted/custom-integrations",
+            "platform/how-to-guides/self-hosted/migration-guide"
+          ]
+        },
+        {
+          "group": "Common Tasks",
+          "pages": [
+            "platform/how-to-guides/common-tasks/working-with-tasks",
+            "platform/how-to-guides/common-tasks/memory-management",
+            "platform/how-to-guides/common-tasks/blocks-development",
+            "platform/how-to-guides/common-tasks/api-integration",
+            "platform/how-to-guides/common-tasks/custom-prompts"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Reference",
+      "pages": [
+        {
+          "group": "API Documentation",
+          "pages": [
+            "platform/reference/api-documentation/rest-api-endpoints",
+            "platform/reference/api-documentation/graphql-schema",
+            "platform/reference/api-documentation/web-socket-interface"
+          ]
+        },
+        {
+          "group": "Configuration",
+          "pages": [
+            "platform/reference/configuration/environment-variables",
+            "platform/reference/configuration/config-file-options",
+            "platform/reference/configuration/authentication"
+          ]
+        },
+        {
+          "group": "Architecture",
+          "pages": [
+            "platform/reference/architecture/system-components",
+            "platform/reference/architecture/data-models",
+            "platform/reference/architecture/event-system"
+          ]
+        },
+        {
+          "group": "SDK Reference",
+          "pages": [
+            "platform/reference/sdk-reference/puthon-sdk",
+            "platform/reference/sdk-reference/javascript-sdk"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Explanation",
+      "pages": [
+        {
+          "group": "Concepts",
+          "pages": [
+            "platform/explanation/concepts/agent-architecture",
+            "platform/explanation/concepts/memory-systems",
+            "platform/explanation/concepts/task-planning",
+            "platform/explanation/concepts/continuous-mode"
+          ]
+        },
+        {
+          "group": "Design Decisions",
+          "pages": [
+            "platform/explanation/design-decisions/architecture-choices",
+            "platform/explanation/design-decisions/security-model",
+            "platform/explanation/design-decisions/scaling-startegy"
+          ]
+        },
+        {
+          "group": "Best Practices",
+          "pages": [
+            "platform/explanation/best-practices/agent-design",
+            "platform/explanation/best-practices/prompt-engineering",
+            "platform/explanation/best-practices/resource-management",
+            "platform/explanation/best-practices/security-guidelines"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Communication & Messaging:",
+      "pages": [
+        "integrations/communication-&-messaging/slack",
+        "integrations/communication-&-messaging/discord",
+        "integrations/communication-&-messaging/gmail",
+        "integrations/communication-&-messaging/twilio"
+      ]
+    },
+    {
+      "group": "Productivity & Work Management",
+      "pages": [
+        "integrations/productivity-&-work-management/notion",
+        "integrations/productivity-&-work-management/asana",
+        "integrations/productivity-&-work-management/github"
+      ]
+    },
+    {
+      "group": "Data & Analytics",
+      "pages": [
+        "integrations/data-&-analytics/snowflake",
+        "integrations/data-&-analytics/grafana",
+        "integrations/data-&-analytics/tableau"
+      ]
+    },
+    {
+      "group": "AI & Machine Learning",
+      "pages": [
+        "integrations/ai-&-machine-learning/open-ai",
+        "integrations/ai-&-machine-learning/claude"
+      ]
+    },
+    {
+      "group": "Business & eCommerce",
+      "pages": [
+        "integrations/business-&-ecommerce/salesforce",
+        "integrations/business-&-ecommerce/stripe",
+        "integrations/business-&-ecommerce/shopify"
+      ]
+    },
+    {
+      "group": "Security & Identity",
+      "pages": [
+        "integrations/security-&-identity/okta",
+        "integrations/security-&-identity/auth0",
+        "integrations/security-&-identity/lastpass"
+      ]
+    },
+    {
+      "group": "Getting Started",
+      "pages": [
+        "contribute/index",
+        "contribute/getting-started/development-setup",
+        "contribute/getting-started/code-organization",
+        "contribute/getting-started/development-workflow",
+        "contribute/getting-started/testing-guide"
+      ]
+    },
+    {
+      "group": "Contributing Guidelines",
+      "pages": [
+        "contribute/contributing-guidelines/code-style",
+        "contribute/contributing-guidelines/documentation-style",
+        "contribute/contributing-guidelines/git-workflow",
+        "contribute/contributing-guidelines/pull-request-process",
+        "contribute/contributing-guidelines/code-review-guidelines"
+      ]
+    },
+    {
+      "group": "Development Reference",
+      "pages": [
+        "contribute/development-reference/architecture-overview",
+        "contribute/development-reference/component-design",
+        "contribute/development-reference/testing-framework",
+        "contribute/development-reference/ci-cd-pipeline",
+        "contribute/development-reference/local-development-tools"
+      ]
+    },
+    {
+      "group": "Community",
+      "pages": [
+        "contribute/community/governance-model",
+        "contribute/community/rfc-process",
+        "contribute/community/community-guidelines",
+        "contribute/community/meeting-notes",
+        "contribute/community/release-process"
+      ]
+    },
+    {
+      "group": "AutoGPT Classic",
+      "pages": [
+        "classic/index",
+        {
+          "group": "Setup",
+          "pages": [
+            "classic/setup/index",
+            "classic/setup/docker",
+            "classic/setup/for-developers",
+            {
+              "group": "Configuration",
+              "pages": [
+                "classic/configuration/options",
+                "classic/configuration/search",
+                "classic/configuration/voice"
+              ]
+            },
+            "classic/usage"
+          ]
+        },
+        {
+          "group": "Help us improve AutoGPT",
+          "pages": [
+            "classic/share-your-logs",
+            "classic/contributing",
+            "classic/testing",
+            "classic/code-of-conduct/index"
+          ]
+        },
+        {
+          "group": "Benchmark",
+          "pages": [
+            "classic/readme"
+          ]
+        },
+        {
+          "group": "Forge",
+          "pages": [
+            "classic/forge/getting-started/index",
+            {
+              "group": "Components",
+              "pages": [
+                "classic/forge/components/introduction",
+                "classic/forge/components/agents",
+                "classic/forge/components/components",
+                "classic/forge/components/protocols",
+                "classic/forge/components/commands",
+                "classic/forge/components/built-in-components",
+                "classic/forge/components/creating-components"
+              ]
+            }
+          ]
+        },
+        {
+          "group": "Frontend",
+          "pages": ["classic/readme-2"]
+        }
+      ]
+    },
+    {
+      "group": "Documentation",
+      "pages": [
+        "classic/documentation/installation",
+        "classic/documentation/basic-usage",
+        "classic/documentation/configuration",
+        "classic/documentation/known-issues",
+        "classic/documentation/migration-guide-to-platform"
+      ]
+    },
+    {
+      "group": "Archive",
+      "pages": [
+        "classic/archive/previous-releases",
+        "classic/archive/historical-features",
+        "classic/archive/deprecated-apis"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "x": "https://x.com/Auto_GPT",
+    "github": "https://github.com/Significant-Gravitas/AutoGPT",
+    "discord": "https://discord.gg/autogpt"
+  }
+}

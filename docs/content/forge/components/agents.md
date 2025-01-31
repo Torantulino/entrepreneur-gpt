@@ -1,1 +1,0 @@
-../../../../classic/original_autogpt/autogpt/agents/README.md
