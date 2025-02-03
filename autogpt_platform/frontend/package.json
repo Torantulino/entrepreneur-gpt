@@ -60,7 +60,7 @@
     "dotenv": "^16.4.7",
     "elliptic": "6.6.1",
     "embla-carousel-react": "^8.5.2",
-    "framer-motion": "^11.16.0",
+    "framer-motion": "^12.0.11",
     "geist": "^1.3.1",
     "launchdarkly-react-client-sdk": "^3.6.0",
     "lucide-react": "^0.474.0",
