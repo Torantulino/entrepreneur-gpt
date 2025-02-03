@@ -9,15 +9,15 @@ packages = [{ include = "autogpt_libs" }]
 [tool.poetry.dependencies]
 colorama = "^0.4.6"
 expiringdict = "^1.2.2"
-google-cloud-logging = "^3.11.3"
-pydantic = "^2.10.5"
+google-cloud-logging = "^3.11.4"
+pydantic = "^2.10.6"
 pydantic-settings = "^2.7.1"
 pyjwt = "^2.10.1"
-pytest-asyncio = "^0.25.2"
+pytest-asyncio = "^0.25.3"
 pytest-mock = "^3.14.0"
 python = ">=3.10,<4.0"
 python-dotenv = "^1.0.1"
-supabase = "^2.11.0"
+supabase = "^2.12.0"
 
 [tool.poetry.group.dev.dependencies]
 redis = "^5.2.1"
