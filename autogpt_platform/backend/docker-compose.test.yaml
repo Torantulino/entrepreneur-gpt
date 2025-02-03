@@ -2,21 +2,21 @@ services:
   postgres-test:
     image: ankane/pgvector:latest
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASS}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     healthcheck:
-      test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
+      test: pg_isready -U postgres -d ${POSTGRES_PORT}
       interval: 10s
       timeout: 5s
       retries: 5
     ports:
-      - "${DB_PORT}:5432"
+      - "${POSTGRES_PORT}:5432"
     networks:
       - app-network-test
   redis-test:
     image: redis:latest
-    command: redis-server --requirepass password
+    command: redis-server --requirepass password   ### ADD REDIS_PASSWORD=yourpassword TO YOUR .env file and replace password ${REDIS_PASSWORD}
     ports:
       - "6379:6379"
     networks:

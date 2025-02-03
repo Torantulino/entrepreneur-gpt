@@ -14,7 +14,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      - DATABASE_URL=postgresql://postgres:your-super-secret-and-long-postgres-password@db:5432/postgres?connect_timeout=60&schema=platform
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?connect_timeout=60&schema=platform
     networks:
       - app-network
     restart: on-failure
@@ -26,7 +26,7 @@ services:
 
   redis:
     image: redis:latest
-    command: redis-server --requirepass password
+    command: redis-server --requirepass ${REDIS_PASSWORD}
     ports:
       - "6379:6379"
     networks:
@@ -56,20 +56,20 @@ services:
       migrate:
         condition: service_completed_successfully
     environment:
-      - SUPABASE_URL=http://kong:8000
-      - SUPABASE_JWT_SECRET=your-super-secret-jwt-token-with-at-least-32-characters-long
-      - SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q
-      - DATABASE_URL=postgresql://postgres:your-super-secret-and-long-postgres-password@db:5432/postgres?connect_timeout=60&schema=platform
+      - SUPABASE_URL=http://kong:${KONG_HTTP_PORT}
+      - SUPABASE_JWT_SECRET=${JWT_SECRET}
+      - SUPABASE_SERVICE_ROLE_KEY=${SERVICE_ROLE_KEY}
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?connect_timeout=60&schema=platform
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=password
+      - REDIS_PASSWORD=password ### ADD REDIS_PASSWORD=yourpassword TO YOUR .env file and replace password with ${REDIS_PASSWORD}
       - ENABLE_AUTH=true
       - PYRO_HOST=0.0.0.0
       - EXECUTIONSCHEDULER_HOST=rest_server
       - EXECUTIONMANAGER_HOST=executor
-      - FRONTEND_BASE_URL=http://localhost:3000
-      - BACKEND_CORS_ALLOW_ORIGINS=["http://localhost:3000"]
-      - ENCRYPTION_KEY=dvziYgz0KSK8FENhju0ZYi8-fRTfAdlz6YLhdB_jhNw=  # DO NOT USE IN PRODUCTION!!
+      - FRONTEND_BASE_URL=${SITE_URL}
+      - BACKEND_CORS_ALLOW_ORIGINS=["${SITE_URL}"]
+      - ENCRYPTION_KEY=${ANON_KEY} 
     ports:
       - "8006:8006"
       - "8003:8003" # execution scheduler
@@ -95,17 +95,17 @@ services:
       migrate:
         condition: service_completed_successfully
     environment:
-      - SUPABASE_URL=http://kong:8000
-      - SUPABASE_JWT_SECRET=your-super-secret-jwt-token-with-at-least-32-characters-long
-      - SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q
-      - DATABASE_URL=postgresql://postgres:your-super-secret-and-long-postgres-password@db:5432/postgres?connect_timeout=60&schema=platform
+      - SUPABASE_URL=http://kong:${KONG_HTTP_PORT}
+      - SUPABASE_JWT_SECRET=${JWT_SECRET}
+      - SUPABASE_SERVICE_ROLE_KEY=${SERVICE_ROLE_KEY}
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?connect_timeout=60&schema=platform
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=password
+      - REDIS_PASSWORD=password ### ADD REDIS_PASSWORD=yourpassword TO YOUR .env file and replace password with ${REDIS_PASSWORD}
       - ENABLE_AUTH=true
       - PYRO_HOST=0.0.0.0
       - AGENTSERVER_HOST=rest_server
-      - ENCRYPTION_KEY=dvziYgz0KSK8FENhju0ZYi8-fRTfAdlz6YLhdB_jhNw=  # DO NOT USE IN PRODUCTION!!
+      - ENCRYPTION_KEY=${ANON_KEY}
     ports:
       - "8002:8000"
     networks:
@@ -130,19 +130,20 @@ services:
       migrate:
         condition: service_completed_successfully
     environment:
-      - SUPABASE_JWT_SECRET=your-super-secret-jwt-token-with-at-least-32-characters-long
-      - DATABASE_URL=postgresql://postgres:your-super-secret-and-long-postgres-password@db:5432/postgres?connect_timeout=60&schema=platform
+      - SUPABASE_JWT_SECRET=${JWT_SECRET}
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?connect_timeout=60&schema=platform
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - REDIS_PASSWORD=password
+      - REDIS_PASSWORD=password ### ADD REDIS_PASSWORD=yourpassword TO YOUR .env file and replace password with ${REDIS_PASSWORD}
       - ENABLE_AUTH=true
       - PYRO_HOST=0.0.0.0
-      - BACKEND_CORS_ALLOW_ORIGINS=["http://localhost:3000"]
+      - BACKEND_CORS_ALLOW_ORIGINS=["${SITE_URL}"]
 
     ports:
       - "8001:8001"
     networks:
       - app-network
+
 
 #  frontend:
 #    build:
@@ -159,9 +160,9 @@ services:
 #      migrate:
 #        condition: service_completed_successfully
 #    environment:
-#      - NEXT_PUBLIC_SUPABASE_URL=http://kong:8000
-#      - NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE
-#      - DATABASE_URL=postgresql://agpt_user:pass123@postgres:5432/postgres?connect_timeout=60&schema=platform
+#      - NEXT_PUBLIC_SUPABASE_URL=http://localhost:${KONG_HTTP_PORT}
+#      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${ANON_KEY}
+#      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}?connect_timeout=60&schema=platform
 #      - NEXT_PUBLIC_AGPT_SERVER_URL=http://localhost:8006/api
 #      - NEXT_PUBLIC_AGPT_WS_SERVER_URL=ws://localhost:8001/ws
 #      - NEXT_PUBLIC_AGPT_MARKETPLACE_URL=http://localhost:8015/api/v1/market
