@@ -53,7 +53,7 @@
 //             <Badge variant="outline">v{agent.version}</Badge>
 //           </div>
 //           <p className="mb-2 text-sm text-gray-500">by {agent.author}</p>
-//           <ScrollArea className="flex-grow">
+//           <ScrollArea className="grow">
 //             <p className="mb-2 text-sm text-gray-600">{agent.description}</p>
 //             <div className="mb-2 flex flex-wrap gap-1">
 //               {agent.categories.map((category) => (

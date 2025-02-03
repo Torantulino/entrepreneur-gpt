@@ -26,11 +26,11 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-sm">
+      <nav className="bg-white shadow-xs">
         <div className="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <h1 className="text-xl font-bold">Admin Panel</h1>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
@@ -53,7 +53,7 @@ export default function AdminLayout({
             <div className="sm:hidden">
               <button
                 type="button"
-                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-indigo-500"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
                 <span className="sr-only">Open main menu</span>

@@ -62,7 +62,7 @@ const InputModalComponent: FC<ModalProps> = ({
       <h2 className="mb-4 text-center text-lg font-semibold">
         {title || "Enter input text"}
       </h2>
-      <div className="nowheel relative flex-grow">
+      <div className="nowheel relative grow">
         <Textarea
           className="h-full min-h-[200px] w-full resize-none"
           value={tempValue}

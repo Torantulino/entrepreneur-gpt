@@ -83,7 +83,7 @@ export function RunnerOutputUI({
             View the outputs from your agent run.
           </SheetDescription>
         </SheetHeader>
-        <div className="flex-grow overflow-y-auto px-2 py-2">
+        <div className="grow overflow-y-auto px-2 py-2">
           <ScrollArea className="h-full overflow-auto pr-4">
             <div className="space-y-4">
               {blockOutputs && blockOutputs.length > 0 ? (

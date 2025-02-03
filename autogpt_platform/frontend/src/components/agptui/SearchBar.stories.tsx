@@ -30,7 +30,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div className="mx-auto w-full max-w-screen-lg p-4">
+      <div className="mx-auto w-full max-w-(--breakpoint-lg) p-4">
         <Story />
       </div>
     ),

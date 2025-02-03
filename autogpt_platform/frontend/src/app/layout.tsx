@@ -102,7 +102,7 @@ export default async function RootLayout({
                 },
               ]}
             />
-            <main className="w-full flex-grow">{children}</main>
+            <main className="w-full grow">{children}</main>
             <TallyPopupSimple />
           </div>
           <Toaster />

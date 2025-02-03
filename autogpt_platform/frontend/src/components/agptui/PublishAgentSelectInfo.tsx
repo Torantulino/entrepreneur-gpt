@@ -189,7 +189,7 @@ export const PublishAgentInfo: React.FC<PublishAgentInfoProps> = ({
         </p>
       </div>
 
-      <div className="flex-grow space-y-5 overflow-y-auto p-6">
+      <div className="grow space-y-5 overflow-y-auto p-6">
         <div className="space-y-1.5">
           <label
             htmlFor="title"
@@ -293,7 +293,7 @@ export const PublishAgentInfo: React.FC<PublishAgentInfoProps> = ({
             ) : (
               <>
                 {images.map((src, index) => (
-                  <div key={index} className="relative flex-shrink-0">
+                  <div key={index} className="relative shrink-0">
                     <Image
                       src={src}
                       alt={`Thumbnail ${index + 1}`}

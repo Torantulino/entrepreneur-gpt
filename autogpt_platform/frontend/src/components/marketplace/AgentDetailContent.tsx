@@ -52,14 +52,14 @@
 //         <div className="flex space-x-4">
 //           <Button
 //             onClick={() => downloadAgent(agent.id)}
-//             className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+//             className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 //           >
 //             <Download className="mr-2" size={16} />
 //             Download Agent
 //           </Button>
 //         </div>
 //       </div>
-//       <div className="overflow-hidden bg-white shadow sm:rounded-lg">
+//       <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
 //         <div className="px-4 py-5 sm:px-6">
 //           <h1 className="text-3xl font-bold text-gray-900">{agent.name}</h1>
 //           <p className="mt-1 max-w-2xl text-sm text-gray-500">

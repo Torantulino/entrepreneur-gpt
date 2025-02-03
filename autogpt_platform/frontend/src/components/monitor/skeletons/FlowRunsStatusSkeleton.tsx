@@ -1,7 +1,7 @@
 export default function FlowRunsStatusSkeleton() {
   return (
     <div className="mx-auto max-w-4xl p-4">
-      <div className="rounded-lg bg-white p-4 shadow">
+      <div className="rounded-lg bg-white p-4 shadow-sm">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-xl font-semibold">Stats</h2>
           <div className="flex space-x-2">

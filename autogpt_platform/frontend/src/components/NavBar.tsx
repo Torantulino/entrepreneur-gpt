@@ -17,7 +17,7 @@ export async function NavBar() {
   const { user } = await getServerUser();
 
   return user ? (
-    <header className="sticky top-0 z-50 mx-4 flex h-16 select-none items-center gap-4 border border-gray-300 bg-background p-3 md:rounded-b-2xl md:px-6 md:shadow">
+    <header className="sticky top-0 z-50 mx-4 flex h-16 select-none items-center gap-4 border border-gray-300 bg-background p-3 md:rounded-b-2xl md:px-6 md:shadow-sm">
       <div className="flex flex-1 items-center gap-4">
         <Sheet>
           <SheetTrigger asChild>

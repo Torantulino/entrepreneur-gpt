@@ -146,7 +146,7 @@ export const ProfileInfoForm = ({ profile }: { profile: CreatorDetails }) => {
                 name="displayName"
                 defaultValue={profileData.name}
                 placeholder="Enter your display name"
-                className="font-circular w-full border-none bg-transparent text-base font-normal text-neutral-900 placeholder:text-neutral-400 focus:outline-none dark:text-white dark:placeholder:text-neutral-500"
+                className="font-circular w-full border-none bg-transparent text-base font-normal text-neutral-900 placeholder:text-neutral-400 focus:outline-hidden dark:text-white dark:placeholder:text-neutral-500"
                 onChange={(e) => {
                   const newProfileData = {
                     ...profileData,
@@ -168,7 +168,7 @@ export const ProfileInfoForm = ({ profile }: { profile: CreatorDetails }) => {
                 name="handle"
                 defaultValue={profileData.username}
                 placeholder="@username"
-                className="font-circular w-full border-none bg-transparent text-base font-normal text-neutral-900 placeholder:text-neutral-400 focus:outline-none dark:text-white dark:placeholder:text-neutral-500"
+                className="font-circular w-full border-none bg-transparent text-base font-normal text-neutral-900 placeholder:text-neutral-400 focus:outline-hidden dark:text-white dark:placeholder:text-neutral-500"
                 onChange={(e) => {
                   const newProfileData = {
                     ...profileData,
@@ -189,7 +189,7 @@ export const ProfileInfoForm = ({ profile }: { profile: CreatorDetails }) => {
                 name="bio"
                 defaultValue={profileData.description}
                 placeholder="Tell us about yourself..."
-                className="font-circular h-full w-full resize-none border-none bg-transparent text-base font-normal text-neutral-900 placeholder:text-neutral-400 focus:outline-none dark:text-white dark:placeholder:text-neutral-500"
+                className="font-circular h-full w-full resize-none border-none bg-transparent text-base font-normal text-neutral-900 placeholder:text-neutral-400 focus:outline-hidden dark:text-white dark:placeholder:text-neutral-500"
                 onChange={(e) => {
                   const newProfileData = {
                     ...profileData,
@@ -223,7 +223,7 @@ export const ProfileInfoForm = ({ profile }: { profile: CreatorDetails }) => {
                         name={`link${linkNum}`}
                         placeholder="https://"
                         defaultValue={link || ""}
-                        className="font-circular w-full border-none bg-transparent text-base font-normal text-neutral-900 placeholder:text-neutral-400 focus:outline-none dark:text-white dark:placeholder:text-neutral-500"
+                        className="font-circular w-full border-none bg-transparent text-base font-normal text-neutral-900 placeholder:text-neutral-400 focus:outline-hidden dark:text-white dark:placeholder:text-neutral-500"
                         onChange={(e) => {
                           const newLinks = [...profileData.links];
                           newLinks[linkNum - 1] = e.target.value;

@@ -91,7 +91,7 @@ export const ProfilePopoutMenu: React.FC<ProfilePopoutMenuProps> = ({
 
       <PopoverContent
         id={popupId}
-        className="flex h-[380px] w-[300px] flex-col items-start justify-start gap-4 rounded-[26px] bg-zinc-400/70 p-6 shadow backdrop-blur-2xl dark:bg-zinc-800/70"
+        className="flex h-[380px] w-[300px] flex-col items-start justify-start gap-4 rounded-[26px] bg-zinc-400/70 p-6 shadow-sm backdrop-blur-2xl dark:bg-zinc-800/70"
       >
         {/* Header with avatar and user info */}
         <div className="inline-flex items-center justify-start gap-4 self-stretch">

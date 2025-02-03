@@ -65,7 +65,7 @@ export const AgentTable: React.FC<AgentTableProps> = ({
               </label>
             </div>
           </div>
-          <div className="ml-2 grid w-full grid-cols-[400px,150px,150px,100px,100px,50px] items-center">
+          <div className="ml-2 grid w-full grid-cols-[400px_150px_150px_100px_100px_50px] items-center">
             <div className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
               Agent info
             </div>
