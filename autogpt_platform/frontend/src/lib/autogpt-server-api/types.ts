@@ -257,14 +257,6 @@ export type GraphUpdateable = Omit<
 
 export type GraphCreatable = Omit<GraphUpdateable, "id"> & { id?: string };
 
-/* Derived from backend/executor/manager.py:ExecutionManager.add_execution */
-export type GraphExecuteResponse = {
-  /** ID of the initiated run */
-  id: string;
-  /** List of node executions */
-  executions: Array<{ id: string; node_id: string }>;
-};
-
 /* Mirror of backend/data/execution.py:ExecutionResult */
 export type NodeExecutionResult = {
   graph_id: string;

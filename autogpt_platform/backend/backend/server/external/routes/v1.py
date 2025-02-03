@@ -59,17 +59,21 @@ def execute_graph_block(
 
 
 @v1_router.post(
-    path="/graphs/{graph_id}/execute",
+    path="/graphs/{graph_id}/execute/{graph_version}",
     tags=["graphs"],
 )
 def execute_graph(
     graph_id: str,
+    graph_version: int,
     node_input: dict[Any, Any],
     api_key: APIKey = Depends(require_permission(APIKeyPermission.EXECUTE_GRAPH)),
 ) -> dict[str, Any]:
     try:
         graph_exec = execution_manager_client().add_execution(
-            graph_id, node_input, user_id=api_key.user_id
+            graph_id,
+            graph_version=graph_version,
+            data=node_input,
+            user_id=api_key.user_id,
         )
         return {"id": graph_exec.graph_exec_id}
     except Exception as e:

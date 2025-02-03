@@ -50,6 +50,7 @@ from backend.server.model import (
     CreateAPIKeyRequest,
     CreateAPIKeyResponse,
     CreateGraph,
+    ExecuteGraphResponse,
     RequestTopUp,
     SetGraphActiveVersion,
     UpdatePermissionsRequest,
@@ -489,7 +490,7 @@ async def set_graph_active_version(
 
 
 @v1_router.post(
-    path="/graphs/{graph_id}/execute",
+    path="/graphs/{graph_id}/execute/{graph_version}",
     tags=["graphs"],
     dependencies=[Depends(auth_middleware)],
 )
@@ -498,12 +499,12 @@ def execute_graph(
     node_input: dict[Any, Any],
     user_id: Annotated[str, Depends(get_user_id)],
     graph_version: Optional[int] = None,
-) -> dict[str, Any]:  # FIXME: add proper return type
+) -> ExecuteGraphResponse:
     try:
         graph_exec = execution_manager_client().add_execution(
             graph_id, node_input, user_id=user_id, graph_version=graph_version
         )
-        return {"id": graph_exec.graph_exec_id}
+        return ExecuteGraphResponse(graph_exec_id=graph_exec.graph_exec_id)
     except Exception as e:
         msg = e.__str__().encode().decode("unicode_escape")
         raise HTTPException(status_code=400, detail=msg)

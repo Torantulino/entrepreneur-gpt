@@ -39,7 +39,7 @@ async def execute_graph(
         graph_version=test_graph.version,
         node_input=input_data,
     )
-    graph_exec_id = response["id"]
+    graph_exec_id = response.graph_exec_id
     logger.info(f"Created execution with ID: {graph_exec_id}")
 
     # Execution queue should be empty

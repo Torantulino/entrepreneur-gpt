@@ -10,6 +10,7 @@ export default function Home() {
     <FlowEditor
       className="flow-container"
       flowID={query.get("flowID") ?? undefined}
+      flowVersion={query.get("flowVersion") ?? undefined}
     />
   );
 }

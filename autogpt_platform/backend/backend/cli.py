@@ -221,7 +221,8 @@ def event():
 @test.command()
 @click.argument("server_address")
 @click.argument("graph_id")
-def websocket(server_address: str, graph_id: str):
+@click.argument("graph_version")
+def websocket(server_address: str, graph_id: str, graph_version: int):
     """
     Tests the websocket connection.
     """
@@ -237,7 +238,9 @@ def websocket(server_address: str, graph_id: str):
             try:
                 msg = WsMessage(
                     method=Methods.SUBSCRIBE,
-                    data=ExecutionSubscription(graph_id=graph_id).model_dump(),
+                    data=ExecutionSubscription(
+                        graph_id=graph_id, graph_version=graph_version
+                    ).model_dump(),
                 ).model_dump_json()
                 await websocket.send(msg)
                 print(f"Sending: {msg}")

@@ -86,13 +86,13 @@ async def handle_subscribe(
         )
     else:
         ex_sub = ExecutionSubscription.model_validate(message.data)
-        await manager.subscribe(ex_sub.graph_id, websocket)
+        await manager.subscribe(ex_sub.graph_id, ex_sub.graph_version, websocket)
         logger.debug(f"New execution subscription for graph {ex_sub.graph_id}")
         await websocket.send_text(
             WsMessage(
                 method=Methods.SUBSCRIBE,
                 success=True,
-                channel=ex_sub.graph_id,
+                channel=str(hash((ex_sub.graph_id, ex_sub.graph_version))),
             ).model_dump_json()
         )
 
@@ -110,13 +110,13 @@ async def handle_unsubscribe(
         )
     else:
         ex_sub = ExecutionSubscription.model_validate(message.data)
-        await manager.unsubscribe(ex_sub.graph_id, websocket)
+        await manager.unsubscribe(ex_sub.graph_id, ex_sub.graph_version, websocket)
         logger.debug(f"Removed execution subscription for graph {ex_sub.graph_id}")
         await websocket.send_text(
             WsMessage(
                 method=Methods.UNSUBSCRIBE,
                 success=True,
-                channel=ex_sub.graph_id,
+                channel=str(hash((ex_sub.graph_id, ex_sub.graph_version))),
             ).model_dump_json()
         )
 

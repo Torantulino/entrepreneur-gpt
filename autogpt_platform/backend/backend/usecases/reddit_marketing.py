@@ -160,7 +160,9 @@ async def reddit_marketing_agent():
             test_graph.id, input_data, test_user.id
         )
         print(response)
-        result = await wait_execution(test_user.id, test_graph.id, response["id"], 120)
+        result = await wait_execution(
+            test_user.id, test_graph.id, response.graph_exec_id, 120
+        )
         print(result)
 
 

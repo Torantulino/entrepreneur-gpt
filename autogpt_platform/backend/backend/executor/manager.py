@@ -873,6 +873,7 @@ class ExecutionManager(AppService):
         graph_exec = GraphExecutionEntry(
             user_id=user_id,
             graph_id=graph_id,
+            graph_version=graph_version or 0,
             graph_exec_id=graph_exec_id,
             start_node_execs=starting_node_execs,
         )

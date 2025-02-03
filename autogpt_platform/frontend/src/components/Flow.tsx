@@ -26,7 +26,7 @@ import {
 import "@xyflow/react/dist/style.css";
 import { CustomNode } from "./CustomNode";
 import "./flow.css";
-import { BlockUIType, Link } from "@/lib/autogpt-server-api";
+import { BlockUIType, formatEdgeID } from "@/lib/autogpt-server-api";
 import { getTypeColor, findNewlyAddedBlockCoordinates } from "@/lib/utils";
 import { history } from "./history";
 import { CustomEdge } from "./CustomEdge";
@@ -70,8 +70,9 @@ export const FlowContext = createContext<FlowContextType | null>(null);
 
 const FlowEditor: React.FC<{
   flowID?: string;
+  flowVersion?: string;
   className?: string;
-}> = ({ flowID, className }) => {
+}> = ({ flowID, flowVersion, className }) => {
   const {
     addNodes,
     addEdges,
@@ -85,6 +86,7 @@ const FlowEditor: React.FC<{
   const [visualizeBeads, setVisualizeBeads] = useState<
     "no" | "static" | "animate"
   >("animate");
+  const [flowExecutionID, setFlowExecutionID] = useState<string | undefined>();
   const {
     agentName,
     setAgentName,
@@ -107,7 +109,12 @@ const FlowEditor: React.FC<{
     setNodes,
     edges,
     setEdges,
-  } = useAgentGraph(flowID, visualizeBeads !== "no");
+  } = useAgentGraph(
+    flowID,
+    flowVersion ? parseInt(flowVersion) : undefined,
+    flowExecutionID,
+    visualizeBeads !== "no",
+  );
 
   const router = useRouter();
   const pathname = usePathname();
@@ -157,6 +164,7 @@ const FlowEditor: React.FC<{
     if (params.get("open_scheduling") === "true") {
       setOpenCron(true);
     }
+    setFlowExecutionID(params.get("flowExecutionID") || undefined);
   }, [params]);
 
   useEffect(() => {
@@ -266,14 +274,6 @@ const FlowEditor: React.FC<{
     },
     [deleteElements, setNodes, nodes, edges, addNodes],
   );
-
-  const formatEdgeID = useCallback((conn: Link | Connection): string => {
-    if ("sink_id" in conn) {
-      return `${conn.source_id}_${conn.source_name}_${conn.sink_id}_${conn.sink_name}`;
-    } else {
-      return `${conn.source}_${conn.sourceHandle}_${conn.target}_${conn.targetHandle}`;
-    }
-  }, []);
 
   const onConnect: OnConnect = useCallback(
     (connection: Connection) => {

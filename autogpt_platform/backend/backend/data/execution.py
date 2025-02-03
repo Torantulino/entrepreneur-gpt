@@ -23,6 +23,7 @@ class GraphExecutionEntry(BaseModel):
     user_id: str
     graph_exec_id: str
     graph_id: str
+    graph_version: int
     start_node_execs: list["NodeExecutionEntry"]
 
 

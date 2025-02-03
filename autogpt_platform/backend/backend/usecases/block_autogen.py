@@ -258,7 +258,7 @@ async def block_autogen_agent():
         print(response)
         result = await wait_execution(
             graph_id=test_graph.id,
-            graph_exec_id=response["id"],
+            graph_exec_id=response.graph_exec_id,
             timeout=1200,
             user_id=test_user.id,
         )
