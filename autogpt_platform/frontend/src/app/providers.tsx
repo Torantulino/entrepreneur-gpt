@@ -8,10 +8,19 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import CredentialsProvider from "@/components/integrations/credentials-provider";
 import { LaunchDarklyProvider } from "@/components/feature-flag/feature-flag-provider";
 
-export function Providers({ children, ...props }: ThemeProviderProps) {
+export interface ProvidersProps extends ThemeProviderProps {
+  children: React.ReactNode;
+  useMockBackend?: boolean;
+}
+
+export function Providers({
+  children,
+  useMockBackend,
+  ...props
+}: ProvidersProps) {
   return (
     <NextThemesProvider {...props}>
-      <BackendAPIProvider>
+      <BackendAPIProvider useMockBackend={useMockBackend}>
         <CredentialsProvider>
           <LaunchDarklyProvider>
             <TooltipProvider>{children}</TooltipProvider>
