@@ -76,7 +76,7 @@
     "react-modal": "^3.16.3",
     "react-shepherd": "^6.1.7",
     "recharts": "^2.14.1",
-    "tailwind-merge": "^2.6.0",
+    "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.0.5",
     "zod": "^3.23.8"
