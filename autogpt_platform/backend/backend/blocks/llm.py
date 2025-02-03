@@ -69,6 +69,7 @@ def AICredentialsField() -> AICredentials:
 class ModelMetadata(NamedTuple):
     provider: str
     context_window: int
+    max_output_tokens: int | None
 
 
 class LlmModelMeta(EnumMeta):
@@ -92,6 +93,8 @@ class LlmModelMeta(EnumMeta):
 
 class LlmModel(str, Enum, metaclass=LlmModelMeta):
     # OpenAI models
+    O3_MINI = "o3-mini"
+    O1 = "o1"
     O1_PREVIEW = "o1-preview"
     O1_MINI = "o1-mini"
     GPT4O_MINI = "gpt-4o-mini"
@@ -100,30 +103,37 @@ class LlmModel(str, Enum, metaclass=LlmModelMeta):
     GPT3_5_TURBO = "gpt-3.5-turbo"
     # Anthropic models
     CLAUDE_3_5_SONNET = "claude-3-5-sonnet-latest"
+    CLAUDE_3_5_HAIKU = "claude-3-5-haiku-latest"
     CLAUDE_3_HAIKU = "claude-3-haiku-20240307"
     # Groq models
-    LLAMA3_8B = "llama3-8b-8192"
-    LLAMA3_70B = "llama3-70b-8192"
-    MIXTRAL_8X7B = "mixtral-8x7b-32768"
-    GEMMA_7B = "gemma-7b-it"
     GEMMA2_9B = "gemma2-9b-it"
-    # New Groq models (Preview)
-    LLAMA3_1_405B = "llama-3.1-405b-reasoning"
-    LLAMA3_1_70B = "llama-3.1-70b-versatile"
+    LLAMA3_3_70B = "llama-3.3-70b-versatile"
     LLAMA3_1_8B = "llama-3.1-8b-instant"
+    LLAMA3_70B = "llama3-70b-8192"
+    LLAMA3_8B = "llama3-8b-8192"
+    MIXTRAL_8X7B = "mixtral-8x7b-32768"
+    # Groq preview models
+    DEEPSEEK_LLAMA_70B = "deepseek-r1-distill-llama-70b"
+    # Deprecated Groq models
+    GEMMA_7B = "gemma-7b-it"
+    LLAMA3_1_70B = "llama-3.1-70b-versatile"
+    LLAMA3_1_405B = "llama-3.1-405b-reasoning"  # missing in the docs
     # Ollama models
+    OLLAMA_LLAMA3_3 = "llama3.3"
     OLLAMA_LLAMA3_2 = "llama3.2"
     OLLAMA_LLAMA3_8B = "llama3"
     OLLAMA_LLAMA3_405B = "llama3.1:405b"
     OLLAMA_DOLPHIN = "dolphin-mistral:latest"
     # OpenRouter models
-    GEMINI_FLASH_1_5_8B = "google/gemini-flash-1.5"
+    GEMINI_FLASH_1_5_8B = (
+        "google/gemini-flash-1.5"  # Actually: google/gemini-flash-1.5-8b
+    )
     GROK_BETA = "x-ai/grok-beta"
     MISTRAL_NEMO = "mistralai/mistral-nemo"
     COHERE_COMMAND_R_08_2024 = "cohere/command-r-08-2024"
     COHERE_COMMAND_R_PLUS_08_2024 = "cohere/command-r-plus-08-2024"
     EVA_QWEN_2_5_32B = "eva-unit-01/eva-qwen-2.5-32b"
-    DEEPSEEK_CHAT = "deepseek/deepseek-chat"
+    DEEPSEEK_CHAT = "deepseek/deepseek-chat"  # Actually: DeepSeek V3
     PERPLEXITY_LLAMA_3_1_SONAR_LARGE_128K_ONLINE = (
         "perplexity/llama-3.1-sonar-large-128k-online"
     )
@@ -148,47 +158,77 @@ class LlmModel(str, Enum, metaclass=LlmModelMeta):
     def context_window(self) -> int:
         return self.metadata.context_window
 
+    @property
+    def max_output_tokens(self) -> int | None:
+        return self.metadata.max_output_tokens
+
 
 MODEL_METADATA = {
-    LlmModel.O1_PREVIEW: ModelMetadata("openai", 32000),
-    LlmModel.O1_MINI: ModelMetadata("openai", 62000),
-    LlmModel.GPT4O_MINI: ModelMetadata("openai", 128000),
-    LlmModel.GPT4O: ModelMetadata("openai", 128000),
-    LlmModel.GPT4_TURBO: ModelMetadata("openai", 128000),
-    LlmModel.GPT3_5_TURBO: ModelMetadata("openai", 16385),
-    LlmModel.CLAUDE_3_5_SONNET: ModelMetadata("anthropic", 200000),
-    LlmModel.CLAUDE_3_HAIKU: ModelMetadata("anthropic", 200000),
-    LlmModel.LLAMA3_8B: ModelMetadata("groq", 8192),
-    LlmModel.LLAMA3_70B: ModelMetadata("groq", 8192),
-    LlmModel.MIXTRAL_8X7B: ModelMetadata("groq", 32768),
-    LlmModel.GEMMA_7B: ModelMetadata("groq", 8192),
-    LlmModel.GEMMA2_9B: ModelMetadata("groq", 8192),
-    LlmModel.LLAMA3_1_405B: ModelMetadata("groq", 8192),
-    # Limited to 16k during preview
-    LlmModel.LLAMA3_1_70B: ModelMetadata("groq", 131072),
-    LlmModel.LLAMA3_1_8B: ModelMetadata("groq", 131072),
-    LlmModel.OLLAMA_LLAMA3_2: ModelMetadata("ollama", 8192),
-    LlmModel.OLLAMA_LLAMA3_8B: ModelMetadata("ollama", 8192),
-    LlmModel.OLLAMA_LLAMA3_405B: ModelMetadata("ollama", 8192),
-    LlmModel.OLLAMA_DOLPHIN: ModelMetadata("ollama", 32768),
-    LlmModel.GEMINI_FLASH_1_5_8B: ModelMetadata("open_router", 8192),
-    LlmModel.GROK_BETA: ModelMetadata("open_router", 8192),
-    LlmModel.MISTRAL_NEMO: ModelMetadata("open_router", 4000),
-    LlmModel.COHERE_COMMAND_R_08_2024: ModelMetadata("open_router", 4000),
-    LlmModel.COHERE_COMMAND_R_PLUS_08_2024: ModelMetadata("open_router", 4000),
-    LlmModel.EVA_QWEN_2_5_32B: ModelMetadata("open_router", 4000),
-    LlmModel.DEEPSEEK_CHAT: ModelMetadata("open_router", 8192),
+    # https://platform.openai.com/docs/models
+    LlmModel.O3_MINI: ModelMetadata("openai", 200000, 100000),  # o3-mini-2025-01-31
+    LlmModel.O1: ModelMetadata("openai", 200000, 100000),  # o1-2024-12-17
+    LlmModel.O1_PREVIEW: ModelMetadata(
+        "openai", 128000, 32768
+    ),  # o1-preview-2024-09-12
+    LlmModel.O1_MINI: ModelMetadata("openai", 128000, 65536),  # o1-mini-2024-09-12
+    LlmModel.GPT4O_MINI: ModelMetadata(
+        "openai", 128000, 16384
+    ),  # gpt-4o-mini-2024-07-18
+    LlmModel.GPT4O: ModelMetadata("openai", 128000, 16384),  # gpt-4o-2024-08-06
+    LlmModel.GPT4_TURBO: ModelMetadata(
+        "openai", 128000, 4096
+    ),  # gpt-4-turbo-2024-04-09
+    LlmModel.GPT3_5_TURBO: ModelMetadata("openai", 16385, 4096),  # gpt-3.5-turbo-0125
+    # https://docs.anthropic.com/en/docs/about-claude/models
+    LlmModel.CLAUDE_3_5_SONNET: ModelMetadata(
+        "anthropic", 200000, 8192
+    ),  # claude-3-5-sonnet-20241022
+    LlmModel.CLAUDE_3_5_HAIKU: ModelMetadata(
+        "anthropic", 200000, 8192
+    ),  # claude-3-5-haiku-20241022
+    LlmModel.CLAUDE_3_HAIKU: ModelMetadata(
+        "anthropic", 200000, 4096
+    ),  # claude-3-haiku-20240307
+    # https://console.groq.com/docs/models
+    LlmModel.GEMMA2_9B: ModelMetadata("groq", 8192, None),
+    LlmModel.LLAMA3_3_70B: ModelMetadata("groq", 128000, 32768),
+    LlmModel.LLAMA3_1_8B: ModelMetadata("groq", 128000, 8192),
+    LlmModel.LLAMA3_70B: ModelMetadata("groq", 8192, None),
+    LlmModel.LLAMA3_8B: ModelMetadata("groq", 8192, None),
+    LlmModel.MIXTRAL_8X7B: ModelMetadata("groq", 32768, None),
+    LlmModel.GEMMA_7B: ModelMetadata("groq", 8192, None),
+    LlmModel.LLAMA3_1_70B: ModelMetadata("groq", 131072, None),
+    LlmModel.LLAMA3_1_405B: ModelMetadata("groq", 8192, None),
+    LlmModel.DEEPSEEK_LLAMA_70B: ModelMetadata("groq", 128000, None),
+    # https://ollama.com/library
+    LlmModel.OLLAMA_LLAMA3_3: ModelMetadata("ollama", 8192, None),
+    LlmModel.OLLAMA_LLAMA3_2: ModelMetadata("ollama", 8192, None),
+    LlmModel.OLLAMA_LLAMA3_8B: ModelMetadata("ollama", 8192, None),
+    LlmModel.OLLAMA_LLAMA3_405B: ModelMetadata("ollama", 8192, None),
+    LlmModel.OLLAMA_DOLPHIN: ModelMetadata("ollama", 32768, None),
+    # https://openrouter.ai/models
+    LlmModel.GEMINI_FLASH_1_5_8B: ModelMetadata("open_router", 1000000, 8192),
+    LlmModel.GROK_BETA: ModelMetadata("open_router", 131072, 131072),
+    LlmModel.MISTRAL_NEMO: ModelMetadata("open_router", 128000, 4096),
+    LlmModel.COHERE_COMMAND_R_08_2024: ModelMetadata("open_router", 128000, 4096),
+    LlmModel.COHERE_COMMAND_R_PLUS_08_2024: ModelMetadata("open_router", 128000, 4096),
+    LlmModel.EVA_QWEN_2_5_32B: ModelMetadata("open_router", 16384, 4096),
+    LlmModel.DEEPSEEK_CHAT: ModelMetadata("open_router", 64000, 2048),
     LlmModel.PERPLEXITY_LLAMA_3_1_SONAR_LARGE_128K_ONLINE: ModelMetadata(
-        "open_router", 8192
+        "open_router", 127072, 127072
     ),
-    LlmModel.QWEN_QWQ_32B_PREVIEW: ModelMetadata("open_router", 4000),
-    LlmModel.NOUSRESEARCH_HERMES_3_LLAMA_3_1_405B: ModelMetadata("open_router", 4000),
-    LlmModel.NOUSRESEARCH_HERMES_3_LLAMA_3_1_70B: ModelMetadata("open_router", 4000),
-    LlmModel.AMAZON_NOVA_LITE_V1: ModelMetadata("open_router", 4000),
-    LlmModel.AMAZON_NOVA_MICRO_V1: ModelMetadata("open_router", 4000),
-    LlmModel.AMAZON_NOVA_PRO_V1: ModelMetadata("open_router", 4000),
-    LlmModel.MICROSOFT_WIZARDLM_2_8X22B: ModelMetadata("open_router", 4000),
-    LlmModel.GRYPHE_MYTHOMAX_L2_13B: ModelMetadata("open_router", 4000),
+    LlmModel.QWEN_QWQ_32B_PREVIEW: ModelMetadata("open_router", 32768, 32768),
+    LlmModel.NOUSRESEARCH_HERMES_3_LLAMA_3_1_405B: ModelMetadata(
+        "open_router", 131000, 4096
+    ),
+    LlmModel.NOUSRESEARCH_HERMES_3_LLAMA_3_1_70B: ModelMetadata(
+        "open_router", 12288, 12288
+    ),
+    LlmModel.AMAZON_NOVA_LITE_V1: ModelMetadata("open_router", 300000, 5120),
+    LlmModel.AMAZON_NOVA_MICRO_V1: ModelMetadata("open_router", 128000, 5120),
+    LlmModel.AMAZON_NOVA_PRO_V1: ModelMetadata("open_router", 300000, 5120),
+    LlmModel.MICROSOFT_WIZARDLM_2_8X22B: ModelMetadata("open_router", 65536, 4096),
+    LlmModel.GRYPHE_MYTHOMAX_L2_13B: ModelMetadata("open_router", 4096, 4096),
 }
 
 for model in LlmModel:
@@ -314,7 +354,7 @@ class AIStructuredResponseGeneratorBlock(AIBlockBase):
         llm_model: LlmModel,
         prompt: list[dict],
         json_format: bool,
-        max_tokens: int | None = None,
+        max_tokens: int,
         ollama_host: str = "localhost:11434",
     ) -> tuple[str, int, int]:
         """
@@ -381,7 +421,7 @@ class AIStructuredResponseGeneratorBlock(AIBlockBase):
                     model=llm_model.value,
                     system=sysprompt,
                     messages=messages,
-                    max_tokens=max_tokens or 8192,
+                    max_tokens=max_tokens,
                 )
                 self.prompt = json.dumps(prompt)
 
@@ -523,7 +563,9 @@ class AIStructuredResponseGeneratorBlock(AIBlockBase):
                     prompt=prompt,
                     json_format=bool(input_data.expected_format),
                     ollama_host=input_data.ollama_host,
-                    max_tokens=input_data.max_tokens,
+                    max_tokens=input_data.max_tokens
+                    or llm_model.max_output_tokens
+                    or 4096,
                 )
                 self.merge_stats(
                     {
