@@ -114,6 +114,9 @@ export default function PrivatePage() {
       "78d19fd7-4d59-4a16-8277-3ce310acf2b7", // E2B
       "96b83908-2789-4dec-9968-18f0ece4ceb3", // Nvidia
       "ed55ac19-356e-4243-a6cb-bc599e9b716f", // Mem0
+      "544c62b5-1d0f-4156-8fb4-9525f11656eb", // Apollo
+      "3bcdbda3-84a3-46af-8fdb-bfd2472298b8", // SmartLead
+      "63a6e279-2dc2-448e-bf57-85776f7176dc", // ZeroBounce
     ],
     [],
   );
