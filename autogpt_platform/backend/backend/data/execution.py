@@ -138,6 +138,7 @@ async def create_graph_execution(
     graph_version: int,
     nodes_input: list[tuple[str, BlockInput]],
     user_id: str,
+    preset_id: str | None = None,
 ) -> tuple[str, list[ExecutionResult]]:
     """
     Create a new AgentGraphExecution record.
@@ -165,6 +166,7 @@ async def create_graph_execution(
                 ]
             },
             "userId": user_id,
+            "agentPresetId": preset_id,
         },
         include=GRAPH_EXECUTION_INCLUDE,
     )

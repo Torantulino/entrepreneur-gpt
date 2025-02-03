@@ -5,6 +5,7 @@ from enum import Enum
 import replicate
 import replicate.exceptions
 import requests
+from prisma.models import AgentGraph
 from replicate.helpers import FileOutput
 
 from backend.data.graph import Graph
@@ -21,7 +22,7 @@ class ImageStyle(str, Enum):
     DIGITAL_ART = "digital art"
 
 
-async def generate_agent_image(agent: Graph) -> io.BytesIO:
+async def generate_agent_image(agent: Graph | AgentGraph) -> io.BytesIO:
     """
     Generate an image for an agent using Flux model via Replicate API.
 
