@@ -1318,7 +1318,7 @@ export const NodeTextBoxInput: FC<{
             schema?.placeholder || `Enter ${beautifyString(displayName)}`
           }
           onChange={(e) => handleInputChange(selfKey, e.target.value)}
-          className="h-full w-full resize-none overflow-hidden border-none bg-transparent text-lg text-black outline-none dark:text-white"
+          className="h-full w-full resize-none overflow-hidden border-none bg-transparent text-lg text-black outline-hidden dark:text-white"
           style={{
             fontSize: "min(1em, 16px)",
             lineHeight: "1.2",

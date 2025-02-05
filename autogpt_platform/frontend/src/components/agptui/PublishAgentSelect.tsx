@@ -93,7 +93,7 @@ export const PublishAgentSelect: React.FC<PublishAgentSelectProps> = ({
         </div>
       ) : (
         <>
-          <div className="flex-grow overflow-hidden p-4 sm:p-6">
+          <div className="grow overflow-hidden p-4 sm:p-6">
             <h3 className="sr-only">List of agents</h3>
             <div
               className="h-[300px] overflow-y-auto pr-2 sm:h-[400px] md:h-[500px]"

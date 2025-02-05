@@ -26,7 +26,7 @@ const OutputModalComponent: FC<OutputModalProps> = ({
     <div className="nodrag nowheel fixed inset-0 flex items-center justify-center bg-white bg-opacity-60">
       <div className="w-[500px] max-w-[90%] rounded-lg border-[1.5px] bg-white p-5">
         <strong>Output Data History</strong>
-        <div className="my-2 max-h-[384px] flex-grow overflow-y-auto rounded-md p-2">
+        <div className="my-2 max-h-[384px] grow overflow-y-auto rounded-md p-2">
           {executionResults.map((data, i) => (
             <>
               <DataTable key={i} title={data.execId} data={data.data} />

@@ -5,7 +5,7 @@ import React from "react";
 interface BoringAvatarWrapperProps {
   size?: number;
   name: string;
-  variant?: "marble" | "beam" | "pixel" | "sunset" | "ring" | "bauhaus";
+  variant?: "marble" | "beam" | "pixel" | "sunset" | "ring-3" | "bauhaus";
   colors?: string[];
   square?: boolean;
 }

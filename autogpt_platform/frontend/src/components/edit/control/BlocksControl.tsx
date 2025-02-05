@@ -267,7 +267,7 @@ export const BlocksControl: React.FC<BlocksControlProps> = ({
                       </span>
                     </div>
                     <div
-                      className="flex flex-shrink-0 items-center gap-1"
+                      className="flex shrink-0 items-center gap-1"
                       data-id={`block-tooltip-${block.id}`}
                       data-testid={`block-add`}
                     >

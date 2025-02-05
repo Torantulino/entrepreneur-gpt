@@ -100,7 +100,7 @@ export const AgentTableRow: React.FC<AgentTableRowProps> = ({
         </div>
       </div>
 
-      <div className="grid w-full grid-cols-[minmax(400px,1fr),180px,140px,100px,100px,40px] items-center gap-4">
+      <div className="grid w-full grid-cols-[minmax(400px,1fr)_180px_140px_100px_100px_40px] items-center gap-4">
         {/* Agent info column */}
         <div className="flex items-center gap-4">
           <div className="relative h-[70px] w-[125px] overflow-hidden rounded-[10px] bg-[#d9d9d9] dark:bg-neutral-700">

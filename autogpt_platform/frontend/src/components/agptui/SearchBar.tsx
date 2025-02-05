@@ -52,7 +52,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         placeholder={placeholder}
-        className={`flex-grow border-none bg-transparent ${textColor} font-['Geist'] text-lg font-normal leading-[2.25rem] tracking-tight md:text-xl placeholder:${placeholderColor} focus:outline-none`}
+        className={`grow border-none bg-transparent ${textColor} font-['Geist'] text-lg font-normal leading-[2.25rem] tracking-tight md:text-xl placeholder:${placeholderColor} focus:outline-hidden`}
         data-testid="store-search-input"
       />
     </form>

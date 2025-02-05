@@ -67,7 +67,7 @@ export function RunnerInputUI({
             Configure settings for running your agent.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex-grow overflow-y-auto px-4 py-4">
+        <div className="grow overflow-y-auto px-4 py-4">
           <InputList blockInputs={blockInputs} onInputChange={onInputChange} />
         </div>
         <DialogFooter className="px-6 py-4">

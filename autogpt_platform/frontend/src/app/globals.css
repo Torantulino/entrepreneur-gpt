@@ -1,49 +1,160 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-neue: 'PP Neue Montreal TT', sans-serif;
+  --font-poppin: var(--font-poppins);
+  --font-inter: var(--font-inter);
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-custom-gray-100: #d9d9d9;
+  --color-custom-gray-200: #a8a8a8;
+  --color-custom-gray-300: #878787;
+  --color-custom-gray-400: #646464;
+  --color-custom-gray-500: #474747;
+  --color-custom-gray-600: #282828;
+  --color-custom-gray-700: #272727;
+
+  --spacing-39: 9.875rem;
+  --spacing-63: 15.875rem;
+  --spacing-68: 17.75rem;
+  --spacing-69: 14.875rem;
+  --spacing-77: 18.5625rem;
+  --spacing-89: 22.5rem;
+  --spacing-139: 37.1875rem;
+  --spacing-167: 41.6875rem;
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-full: 9999px;
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
+  }
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@utility w-110 {
+  width: 27.5rem;
+}
+
+@utility h-7.5 {
+  height: 1.1875rem;
+}
+
+@utility h-18 {
+  height: 4.5rem;
+}
+
+@utility h-238 {
+  height: 14.875rem;
+}
+
+@utility top-158 {
+  top: 9.875rem;
+}
+
+@utility top-254 {
+  top: 15.875rem;
+}
+
+@utility top-284 {
+  top: 17.75rem;
+}
+
+@utility top-360 {
+  top: 22.5rem;
+}
+
+@utility left-297 {
+  left: 18.5625rem;
+}
+
+@utility left-34 {
+  left: 2.125rem;
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
 
 @layer base {
   .font-neue {
     font-family: "PP Neue Montreal TT", sans-serif;
-  }
-}
-
-@layer utilities {
-  .w-110 {
-    width: 27.5rem;
-  }
-  .h-7\.5 {
-    height: 1.1875rem;
-  }
-  .h-18 {
-    height: 4.5rem;
-  }
-  .h-238 {
-    height: 14.875rem;
-  }
-  .top-158 {
-    top: 9.875rem;
-  }
-  .top-254 {
-    top: 15.875rem;
-  }
-  .top-284 {
-    top: 17.75rem;
-  }
-  .top-360 {
-    top: 22.5rem;
-  }
-  .left-297 {
-    left: 18.5625rem;
-  }
-  .left-34 {
-    left: 2.125rem;
-  }
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
   }
 }
 
@@ -113,10 +224,10 @@
   }
 
   .agpt-border-input {
-    @apply border border-input focus-visible:border-gray-400 focus-visible:outline-none;
+    @apply border border-input focus-visible:border-gray-400 focus-visible:outline-hidden;
   }
 
   .agpt-shadow-input {
-    @apply shadow-sm focus-visible:shadow-md;
+    @apply shadow-xs focus-visible:shadow-md;
   }
 }
