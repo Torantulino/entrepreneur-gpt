@@ -153,7 +153,7 @@ class Config(UpdateTrackingModel["Config"], BaseSettings):
     )
 
     media_gcs_bucket_name: str = Field(
-        default="",
+        default="autogpt_bucket",
         description="The name of the Google Cloud Storage bucket for media files",
     )
 

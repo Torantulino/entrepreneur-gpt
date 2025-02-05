@@ -233,6 +233,7 @@ export type GraphMeta = {
   version: number;
   is_active: boolean;
   name: string;
+  isCreatedByUser?: boolean;
   description: string;
   input_schema: BlockIOObjectSubSchema;
   output_schema: BlockIOObjectSubSchema;

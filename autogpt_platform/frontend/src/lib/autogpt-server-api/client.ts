@@ -445,11 +445,39 @@ export default class BackendAPI {
   /////////// V2 LIBRARY API //////////////
   /////////////////////////////////////////
 
-  async listLibraryAgents(): Promise<GraphMeta[]> {
-    return this._get("/library/agents");
+  async listLibraryAgents(
+    paginationToken?: string,
+  ): Promise<{ agents: GraphMeta[]; next_token: string | null }> {
+    return this._get(
+      "/library/agents",
+      paginationToken ? { pagination_token: paginationToken } : undefined,
+    );
+  }
+
+  async librarySearchAgent(
+    search?: string,
+    filter?: LibraryAgentFilterEnum,
+    token?: string,
+  ): Promise<{ agents: GraphMeta[]; next_token: string | null }> {
+    const queryParams: Record<string, any> = {};
+
+    if (search != undefined) {
+      queryParams.search_term = search;
+    }
+
+    if (filter) {
+      queryParams.sort_by = filter;
+    }
+
+    if (token) {
+      queryParams.pagination_token = token;
+    }
+
+    return this._get("/library/agents/search", queryParams);
   }
 
   async addAgentToLibrary(storeListingVersionId: string): Promise<void> {
+    console.log("Adding to the library");
     await this._request("POST", `/library/agents/${storeListingVersionId}`);
   }
 

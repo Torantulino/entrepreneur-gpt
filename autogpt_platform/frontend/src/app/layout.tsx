@@ -4,6 +4,8 @@ import { Inter, Poppins } from "next/font/google";
 import { Providers } from "@/app/providers";
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/agptui/Navbar";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 
 import "./globals.css";
 import TallyPopupSimple from "@/components/TallyPopup";
@@ -15,6 +17,12 @@ import { GeistMono } from "geist/font/mono";
 
 // Fonts
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
+});
+
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
