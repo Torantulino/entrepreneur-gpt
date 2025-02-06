@@ -5028,6 +5028,21 @@ defusedxml = ">=0.7.1,<0.8.0"
 requests = "*"
 
 [[package]]
+name = "zerobouncesdk"
+version = "1.1.1"
+description = "ZeroBounce Python API - https://www.zerobounce.net."
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+files = [
+    {file = "zerobouncesdk-1.1.1-py3-none-any.whl", hash = "sha256:9fb9dfa44fe4ce35d6f2e43d5144c31ca03544a3317d75643cb9f86b0c028675"},
+    {file = "zerobouncesdk-1.1.1.tar.gz", hash = "sha256:00aa537263d5bc21534c0007dd9f94ce8e0986caa530c5a0bbe0bd917451f236"},
+]
+
+[package.dependencies]
+requests = ">=2.22.0"
+
+[[package]]
 name = "zipp"
 version = "3.21.0"
 description = "Backport of pathlib-compatible object wrapper for zip files"
@@ -5050,4 +5065,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.13"
-content-hash = "fdb3477d3a44e3d471d8b89800030511fbbdcba020a4e6bc1debd534b8b25d3f"
+content-hash = "c00dea04c5f7fceab4029caac590ba1a8a3978c4a657f4ae8091bdeb45227db3"

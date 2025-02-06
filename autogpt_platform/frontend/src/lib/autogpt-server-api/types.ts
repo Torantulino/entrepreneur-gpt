@@ -112,6 +112,7 @@ export type Credentials =
 // --8<-- [start:BlockIOCredentialsSubSchema]
 export const PROVIDER_NAMES = {
   ANTHROPIC: "anthropic",
+  APOLLO: "apollo",
   D_ID: "d_id",
   DISCORD: "discord",
   E2B: "e2b",
@@ -134,8 +135,9 @@ export const PROVIDER_NAMES = {
   OPENWEATHERMAP: "openweathermap",
   OPEN_ROUTER: "open_router",
   PINECONE: "pinecone",
-  SLANT3D: "slant3d",
   SCREENSHOTONE: "screenshotone",
+  SLANT3D: "slant3d",
+  SMARTLEAD: "smartlead",
   SMTP: "smtp",
   TWITTER: "twitter",
   REPLICATE: "replicate",
@@ -143,6 +145,7 @@ export const PROVIDER_NAMES = {
   REVID: "revid",
   UNREAL_SPEECH: "unreal_speech",
   TODOIST: "todoist",
+  ZEROBOUNCE: "zerobounce",
 } as const;
 // --8<-- [end:BlockIOCredentialsSubSchema]
 
