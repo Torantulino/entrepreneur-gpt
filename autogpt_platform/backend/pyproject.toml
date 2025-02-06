@@ -70,7 +70,7 @@ isort = "^5.13.2"
 black = "^24.10.0"
 aiohappyeyeballs = "^2.4.4"
 pytest-mock = "^3.14.0"
-faker = "^33.3.1"
+faker = "^35.2.0"
 
 [build-system]
 requires = ["poetry-core"]
