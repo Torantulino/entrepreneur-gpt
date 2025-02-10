@@ -589,3 +589,65 @@ export interface TransactionHistory {
   transactions: CreditTransaction[];
   next_transaction_time: Date | null;
 }
+
+export enum AgentStatus {
+  COMPLETED = "COMPLETED",
+  HEALTHY = "HEALTHY",
+  WAITING = "WAITING",
+  ERROR = "ERROR",
+}
+
+export interface LibraryAgent {
+  id: string;
+  agent_id: string;
+  agent_version: number;
+  image_url: string;
+  creator_name: string;
+  creator_image_url: string;
+  status: AgentStatus;
+  updated_at: Date;
+  name: string;
+  description: string;
+  input_schema: { [key: string]: any };
+  new_output: boolean;
+  can_access_graph: boolean;
+  is_latest_version: boolean;
+}
+
+export interface LibraryAgentResponse {
+  agents: LibraryAgent[];
+  pagination: {
+    total: number;
+    page: number;
+    size: number;
+  };
+}
+
+export interface LibraryAgentPreset {
+  id: string;
+  updated_at: Date;
+  agent_id: string;
+  agent_version: number;
+  name: string;
+  description: string;
+  is_active: boolean;
+  inputs: { [key: string]: any };
+}
+
+export interface LibraryAgentPresetResponse {
+  presets: LibraryAgentPreset[];
+  pagination: {
+    total: number;
+    page: number;
+    size: number;
+  };
+}
+
+export interface CreateLibraryAgentPresetRequest {
+  name: string;
+  description: string;
+  inputs: { [key: string]: any };
+  agent_id: string;
+  agent_version: number;
+  is_active: boolean;
+}

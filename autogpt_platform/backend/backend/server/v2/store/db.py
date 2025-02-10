@@ -766,21 +766,21 @@ async def get_agent(
             )
         )
 
-        if not store_listing_version or not store_listing_version.Agent:
+        if not store_listing_version:
             raise fastapi.HTTPException(
                 status_code=404,
                 detail=f"Store listing version {store_listing_version_id} not found",
             )
 
-        graph_id = store_listing_version.agentId
-        graph_version = store_listing_version.agentVersion
-        graph = await backend.data.graph.get_graph(graph_id, graph_version)
+        graph = await backend.data.graph.get_graph(
+            store_listing_version.agentId, store_listing_version.agentVersion
+        )
 
         if not graph:
             raise fastapi.HTTPException(
                 status_code=404,
                 detail=(
-                    f"Agent #{graph_id} not found "
+                    f"Agent #{store_listing_version.agentId} not found "
                     f"for store listing version #{store_listing_version_id}"
                 ),
             )

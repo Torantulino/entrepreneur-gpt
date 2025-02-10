@@ -17,6 +17,7 @@ import backend.data.db
 import backend.data.graph
 import backend.data.user
 import backend.server.routers.v1
+import backend.server.v2.library.model
 import backend.server.v2.library.routes
 import backend.server.v2.store.model
 import backend.server.v2.store.routes
@@ -43,7 +44,7 @@ def launch_darkly_context():
 
 
 @contextlib.asynccontextmanager
-async def lifespan_context(app: fastapi.FastAPI):
+async def lifespan_context(_lifespan_app: fastapi.FastAPI):
     await backend.data.db.connect()
     await backend.data.block.initialize_blocks()
     await backend.data.user.migrate_and_encrypt_user_integrations()
@@ -171,6 +172,59 @@ class AgentServer(backend.util.service.AppProcess):
     @staticmethod
     async def test_delete_graph(graph_id: str, user_id: str):
         return await backend.server.routers.v1.delete_graph(graph_id, user_id)
+
+    @staticmethod
+    async def test_get_presets(user_id: str, page: int = 1, page_size: int = 10):
+        return await backend.server.v2.library.routes.presets.get_presets(
+            user_id=user_id, page=page, page_size=page_size
+        )
+
+    @staticmethod
+    async def test_get_preset(preset_id: str, user_id: str):
+        return await backend.server.v2.library.routes.presets.get_preset(
+            preset_id=preset_id, user_id=user_id
+        )
+
+    @staticmethod
+    async def test_create_preset(
+        preset: backend.server.v2.library.model.CreateLibraryAgentPresetRequest,
+        user_id: str,
+    ):
+        return await backend.server.v2.library.routes.presets.create_preset(
+            preset=preset, user_id=user_id
+        )
+
+    @staticmethod
+    async def test_update_preset(
+        preset_id: str,
+        preset: backend.server.v2.library.model.CreateLibraryAgentPresetRequest,
+        user_id: str,
+    ):
+        return await backend.server.v2.library.routes.presets.update_preset(
+            preset_id=preset_id, preset=preset, user_id=user_id
+        )
+
+    @staticmethod
+    async def test_delete_preset(preset_id: str, user_id: str):
+        return await backend.server.v2.library.routes.presets.delete_preset(
+            preset_id=preset_id, user_id=user_id
+        )
+
+    @staticmethod
+    async def test_execute_preset(
+        graph_id: str,
+        graph_version: int,
+        preset_id: str,
+        node_input: dict[Any, Any],
+        user_id: str,
+    ):
+        return await backend.server.v2.library.routes.presets.execute_preset(
+            graph_id=graph_id,
+            graph_version=graph_version,
+            preset_id=preset_id,
+            node_input=node_input,
+            user_id=user_id,
+        )
 
     @staticmethod
     async def test_create_store_listing(
