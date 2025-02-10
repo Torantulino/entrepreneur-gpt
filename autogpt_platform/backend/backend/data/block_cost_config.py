@@ -20,6 +20,7 @@ from backend.blocks.text_to_speech_block import UnrealTextToSpeechBlock
 from backend.data.block import Block
 from backend.data.cost import BlockCost, BlockCostType
 from backend.integrations.credentials_store import (
+    aiml_api_credentials,
     anthropic_credentials,
     did_credentials,
     groq_credentials,
@@ -46,6 +47,11 @@ MODEL_COST: dict[LlmModel, int] = {
     LlmModel.CLAUDE_3_5_SONNET: 4,
     LlmModel.CLAUDE_3_5_HAIKU: 1,  # $0.80 / $4.00
     LlmModel.CLAUDE_3_HAIKU: 1,
+    LlmModel.AIML_API_QWEN2_5_72B: 1,
+    LlmModel.AIML_API_LLAMA3_1_70B: 1,
+    LlmModel.AIML_API_LLAMA3_3_70B: 1,
+    LlmModel.AIML_API_META_LLAMA_3_1_70B: 1,
+    LlmModel.AIML_API_LLAMA_3_2_3B: 1,
     LlmModel.LLAMA3_8B: 1,
     LlmModel.LLAMA3_70B: 1,
     LlmModel.MIXTRAL_8X7B: 1,
@@ -145,6 +151,23 @@ LLM_COST = (
         )
         for model, cost in MODEL_COST.items()
         if MODEL_METADATA[model].provider == "open_router"
+    ]
+    # AI/ML Api Models
+    + [
+        BlockCost(
+            cost_type=BlockCostType.RUN,
+            cost_filter={
+                "model": model,
+                "credentials": {
+                    "id": aiml_api_credentials.id,
+                    "provider": aiml_api_credentials.provider,
+                    "type": aiml_api_credentials.type,
+                },
+            },
+            cost_amount=cost,
+        )
+        for model, cost in MODEL_COST.items()
+        if MODEL_METADATA[model].provider == "aiml_api"
     ]
 )
 

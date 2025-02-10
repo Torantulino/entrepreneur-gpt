@@ -60,6 +60,7 @@ export const providerIcons: Record<
   github: FaGithub,
   google: FaGoogle,
   groq: fallbackIcon,
+  aiml_api: fallbackIcon,
   notion: NotionLogoIcon,
   nvidia: fallbackIcon,
   discord: FaDiscord,
