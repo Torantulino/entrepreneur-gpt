@@ -66,6 +66,7 @@ The platform comes pre-integrated with cutting-edge LLM providers:
 
 - OpenAI
 - Anthropic
+- AI/ML API
 - Groq
 - Llama
 

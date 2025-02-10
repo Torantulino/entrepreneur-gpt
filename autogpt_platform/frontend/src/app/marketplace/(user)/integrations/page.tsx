@@ -104,6 +104,7 @@ export default function PrivatePage() {
       "6b9fc200-4726-4973-86c9-cd526f5ce5db", // Replicate
       "53c25cb8-e3ee-465c-a4d1-e75a4c899c2a", // OpenAI
       "24e5d942-d9e3-4798-8151-90143ee55629", // Anthropic
+      "aad82a89-9794-4ebb-977f-d736aa5260a3", // AI/ML
       "4ec22295-8f97-4dd1-b42b-2c6957a02545", // Groq
       "7f7b0654-c36b-4565-8fa7-9a52575dfae2", // D-ID
       "7f26de70-ba0d-494e-ba76-238e65e7b45f", // Jina

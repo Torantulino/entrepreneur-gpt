@@ -38,6 +38,7 @@ LLMProviderName = Literal[
     ProviderName.OLLAMA,
     ProviderName.OPENAI,
     ProviderName.OPEN_ROUTER,
+    ProviderName.AIML_API,
 ]
 AICredentials = CredentialsMetaInput[LLMProviderName, Literal["api_key"]]
 
@@ -105,6 +106,12 @@ class LlmModel(str, Enum, metaclass=LlmModelMeta):
     CLAUDE_3_5_SONNET = "claude-3-5-sonnet-latest"
     CLAUDE_3_5_HAIKU = "claude-3-5-haiku-latest"
     CLAUDE_3_HAIKU = "claude-3-haiku-20240307"
+    # AI/ML API models
+    AIML_API_QWEN2_5_72B = "Qwen/Qwen2.5-72B-Instruct-Turbo"
+    AIML_API_LLAMA3_1_70B = "nvidia/llama-3.1-nemotron-70b-instruct"
+    AIML_API_LLAMA3_3_70B = "meta-llama/Llama-3.3-70B-Instruct-Turbo"
+    AIML_API_META_LLAMA_3_1_70B = "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo"
+    AIML_API_LLAMA_3_2_3B = "meta-llama/Llama-3.2-3B-Instruct-Turbo"
     # Groq models
     GEMMA2_9B = "gemma2-9b-it"
     LLAMA3_3_70B = "llama-3.3-70b-versatile"
@@ -183,6 +190,12 @@ MODEL_METADATA = {
     LlmModel.CLAUDE_3_HAIKU: ModelMetadata(
         "anthropic", 200000, 4096
     ),  # claude-3-haiku-20240307
+    # https://docs.aimlapi.com/api-overview/model-database/text-models
+    LlmModel.AIML_API_QWEN2_5_72B: ModelMetadata("aiml_api", 32000, 8000),
+    LlmModel.AIML_API_LLAMA3_1_70B: ModelMetadata("aiml_api", 128000, 40000),
+    LlmModel.AIML_API_LLAMA3_3_70B: ModelMetadata("aiml_api", 128000, None),
+    LlmModel.AIML_API_META_LLAMA_3_1_70B: ModelMetadata("aiml_api", 131000, 2000),
+    LlmModel.AIML_API_LLAMA_3_2_3B: ModelMetadata("aiml_api", 128000, None),
     # https://console.groq.com/docs/models
     LlmModel.GEMMA2_9B: ModelMetadata("groq", 8192, None),
     LlmModel.LLAMA3_3_70B: ModelMetadata("groq", 128000, 32768),
@@ -491,6 +504,24 @@ class AIStructuredResponseGeneratorBlock(AIBlockBase):
                 response.choices[0].message.content or "",
                 response.usage.prompt_tokens if response.usage else 0,
                 response.usage.completion_tokens if response.usage else 0,
+            )
+        elif provider == "aiml_api":
+            client = openai.OpenAI(
+                base_url="https://api.aimlapi.com/v2",
+                api_key=credentials.api_key.get_secret_value(),
+                default_headers={"X-Project": "AutoGPT"},
+            )
+
+            completion = client.chat.completions.create(
+                model=llm_model.value,
+                messages=prompt,  # type: ignore
+                max_tokens=max_tokens,
+            )
+
+            return (
+                completion.choices[0].message.content or "",
+                completion.usage.prompt_tokens if completion.usage else 0,
+                completion.usage.completion_tokens if completion.usage else 0,
             )
         else:
             raise ValueError(f"Unsupported LLM provider: {provider}")
