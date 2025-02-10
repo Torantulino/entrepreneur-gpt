@@ -44,7 +44,7 @@
     "@radix-ui/react-switch": "^1.1.1",
     "@radix-ui/react-toast": "^1.2.5",
     "@radix-ui/react-tooltip": "^1.1.7",
-    "@sentry/nextjs": "^8",
+    "@sentry/nextjs": "^9",
     "@stripe/stripe-js": "^5.6.0",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.48.1",
