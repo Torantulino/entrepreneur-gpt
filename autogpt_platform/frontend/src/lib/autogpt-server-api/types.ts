@@ -512,6 +512,7 @@ export type Schedule = {
 export type ScheduleCreatable = {
   cron: string;
   graph_id: string;
+  graph_version: number;
   input_data: { [key: string]: any };
 };
 

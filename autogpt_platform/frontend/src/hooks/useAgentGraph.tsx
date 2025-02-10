@@ -963,6 +963,8 @@ export default function useAgentGraph(
         if (flowID) {
           await api.createSchedule({
             graph_id: flowID,
+            // flowVersion is always defined here because scheduling is opened for a specific version
+            graph_version: flowVersion!,
             cron: cronExpression,
             input_data: inputs.reduce(
               (acc, input) => ({
