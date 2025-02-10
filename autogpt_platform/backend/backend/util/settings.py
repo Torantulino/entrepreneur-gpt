@@ -172,6 +172,20 @@ class Config(UpdateTrackingModel["Config"], BaseSettings):
         description="The pool size for the scheduler database connection pool",
     )
 
+    rabbitmq_host: str = Field(
+        default="localhost",
+        description="The host for the RabbitMQ server",
+    )
+    rabbitmq_port: int = Field(
+        default=5672,
+        description="The port for the RabbitMQ server",
+    )
+
+    rabbitmq_vhost: str = Field(
+        default="/",
+        description="The vhost for the RabbitMQ server",
+    )
+
     @field_validator("platform_base_url", "frontend_base_url")
     @classmethod
     def validate_platform_base_url(cls, v: str, info: ValidationInfo) -> str:
@@ -262,6 +276,11 @@ class Secrets(UpdateTrackingModel["Secrets"], BaseSettings):
     )
 
     encryption_key: str = Field(default="", description="Encryption key")
+
+    rabbitmq_default_user: str = Field(default="", description="RabbitMQ default user")
+    rabbitmq_default_pass: str = Field(
+        default="", description="RabbitMQ default password"
+    )
 
     # OAuth server credentials for integrations
     # --8<-- [start:OAuthServerCredentialsExample]
