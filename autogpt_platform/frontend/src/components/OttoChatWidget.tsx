@@ -24,11 +24,6 @@ interface Message {
 }
 
 const OttoChatWidget = () => {
-  // Don't render the chat widget if we're in local mode for now
-  if (process.env.NEXT_PUBLIC_BEHAVE_AS !== "CLOUD") {
-    return null;
-  }
-
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -41,6 +36,11 @@ const OttoChatWidget = () => {
   const { nodes, edges } = useAgentGraph(flowID || undefined);
   const { toast } = useToast();
 
+  // Don't render the chat widget if we're in local mode
+  if (process.env.NEXT_PUBLIC_BEHAVE_AS !== "CLOUD") {
+    return null;
+  }
+
   useEffect(() => {
     // Add welcome message when component mounts
     if (messages.length === 0) {
@@ -51,7 +51,7 @@ const OttoChatWidget = () => {
         },
       ]);
     }
-  }, []);
+  }, [messages.length]);
 
   useEffect(() => {
     // Scroll to bottom whenever messages change
