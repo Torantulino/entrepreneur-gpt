@@ -8,7 +8,7 @@ packages = [{ include = "backend", format = "sdist" }]
 
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.13"
+python = ">=3.11,<3.13"
 aio-pika = "^9.5.4"
 anthropic = "^0.45.2"
 apscheduler = "^3.11.0"
@@ -58,6 +58,7 @@ launchdarkly-server-sdk = "^9.8.0"
 mem0ai = "^0.1.48"
 todoist-api-python = "^2.1.7"
 moviepy = "^2.1.2"
+gravitasml = "0.1.2"
 pika = "^1.3.2"
 
 [tool.poetry.group.dev.dependencies]
