@@ -24,7 +24,7 @@
   ],
   "dependencies": {
     "@faker-js/faker": "^9.4.0",
-    "@hookform/resolvers": "^3.10.0",
+    "@hookform/resolvers": "^4.0.0",
     "@next/third-parties": "^15.1.6",
     "@radix-ui/react-alert-dialog": "^1.1.5",
     "@radix-ui/react-avatar": "^1.1.1",
