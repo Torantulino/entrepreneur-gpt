@@ -44,7 +44,7 @@ supabase = "2.13.0"
 tenacity = "^9.0.0"
 tweepy = "^4.14.0"
 uvicorn = { extras = ["standard"], version = "^0.34.0" }
-websockets = "^13.1"
+websockets = "^14.2"
 youtube-transcript-api = "^0.6.2"
 googlemaps = "^4.10.0"
 replicate = "^1.0.4"
