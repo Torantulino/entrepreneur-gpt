@@ -15,8 +15,8 @@ export interface AgentTableCardProps {
   imageSrc: string[];
   dateSubmitted: string;
   status: StatusType;
-  runs: number;
-  rating: number;
+  runs?: number;
+  rating?: number;
   id: number;
   onEditSubmission: (submission: StoreSubmissionRequest) => void;
 }
@@ -82,11 +82,11 @@ export const AgentTableCard: React.FC<AgentTableCardProps> = ({
           {dateSubmitted}
         </div>
         <div className="text-sm text-neutral-600 dark:text-neutral-400">
-          {runs.toLocaleString()} runs
+          {runs ? runs.toLocaleString() : "N/A"} runs
         </div>
         <div className="flex items-center gap-1">
           <span className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
-            {rating.toFixed(1)}
+            {rating ? rating.toFixed(1) : "N/A"}
           </span>
           <IconStarFilled className="h-4 w-4 text-neutral-800 dark:text-neutral-200" />
         </div>

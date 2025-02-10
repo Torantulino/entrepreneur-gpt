@@ -9,6 +9,10 @@ import { ProfileDetails } from "@/lib/autogpt-server-api/types";
 import { NavbarLink } from "./NavbarLink";
 import getServerUser from "@/lib/supabase/getServerUser";
 import BackendAPI from "@/lib/autogpt-server-api";
+import { User } from "@supabase/supabase-js";
+import MockClient, {
+  MockClientProps,
+} from "@/lib/autogpt-server-api/mock_client";
 
 // Disable theme toggle for now
 // import { ThemeToggle } from "./ThemeToggle";
@@ -29,21 +33,33 @@ interface NavbarProps {
       onClick?: () => void;
     }[];
   }[];
+  mockUser?: User;
+  mockClientProps?: MockClientProps;
 }
 
-async function getProfileData() {
+async function getProfileData(mockClientProps?: MockClientProps) {
+  if (mockClientProps) {
+    const api = new MockClient(mockClientProps);
+    const profile = await Promise.resolve(api.getStoreProfile("navbar"));
+    return profile;
+  }
   const api = new BackendAPI();
   const profile = await Promise.resolve(api.getStoreProfile("navbar"));
 
   return profile;
 }
 
-export const Navbar = async ({ links, menuItemGroups }: NavbarProps) => {
-  const { user } = await getServerUser();
+export const Navbar = async ({
+  links,
+  menuItemGroups,
+  mockUser,
+  mockClientProps,
+}: NavbarProps) => {
+  const { user } = await getServerUser(mockUser);
   const isLoggedIn = user !== null;
   let profile: ProfileDetails | null = null;
   if (isLoggedIn) {
-    profile = await getProfileData();
+    profile = await getProfileData(mockClientProps);
   }
 
   return (
