@@ -24,6 +24,11 @@ interface Message {
 }
 
 const OttoChatWidget = () => {
+  // Don't render the chat widget if we're in local mode for now
+  if (process.env.NEXT_PUBLIC_BEHAVE_AS !== "CLOUD") {
+    return null;
+  }
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
