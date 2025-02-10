@@ -117,9 +117,8 @@ class AppService(AppProcess, ABC):
     shared_event_loop: asyncio.AbstractEventLoop
     use_db: bool = False
     use_redis: bool = False
-    use_async: bool = False
     use_rabbitmq: Optional[rabbitmq.RabbitMQConfig] = None
-    rabbitmq_service: Optional[rabbitmq.SyncRabbitMQ | rabbitmq.AsyncRabbitMQ] = None
+    rabbitmq_service: Optional[rabbitmq.AsyncRabbitMQ] = None
     use_supabase: bool = False
 
     def __init__(self):
@@ -135,7 +134,7 @@ class AppService(AppProcess, ABC):
         return os.environ.get(f"{cls.service_name.upper()}_HOST", config.pyro_host)
 
     @property
-    def rabbit(self) -> rabbitmq.SyncRabbitMQ | rabbitmq.AsyncRabbitMQ:
+    def rabbit(self) -> rabbitmq.AsyncRabbitMQ:
         """Access the RabbitMQ service. Will raise if not configured."""
         if not self.rabbitmq_service:
             raise RuntimeError("RabbitMQ not configured for this service")
@@ -167,14 +166,12 @@ class AppService(AppProcess, ABC):
             redis.connect()
         if self.use_rabbitmq:
             logger.info(f"[{self.__class__.__name__}] ⏳ Configuring RabbitMQ...")
-            if self.use_async:
-                self.rabbitmq_service = rabbitmq.AsyncRabbitMQ(self.use_rabbitmq)
-                self.shared_event_loop.run_until_complete(
-                    self.rabbitmq_service.connect()
-                )
-            else:
-                self.rabbitmq_service = rabbitmq.SyncRabbitMQ(self.use_rabbitmq)
-                self.rabbitmq_service.connect()
+            # if self.use_async:
+            self.rabbitmq_service = rabbitmq.AsyncRabbitMQ(self.use_rabbitmq)
+            self.shared_event_loop.run_until_complete(self.rabbitmq_service.connect())
+            # else:
+            #     self.rabbitmq_service = rabbitmq.SyncRabbitMQ(self.use_rabbitmq)
+            #     self.rabbitmq_service.connect()
         if self.use_supabase:
             from supabase import create_client
 

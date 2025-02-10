@@ -12,8 +12,15 @@ from typing import TYPE_CHECKING, Any, Generator, Optional, TypeVar, cast
 
 from redis.lock import Lock as RedisLock
 
+from backend.data.notifications import (
+    AgentRunData,
+    NotificationEventModel,
+    NotificationType,
+)
+
 if TYPE_CHECKING:
     from backend.executor import DatabaseManager
+    from backend.notifications.notifications import NotificationManager
 
 from autogpt_libs.utils.cache import thread_cached
 
@@ -108,6 +115,7 @@ ExecutionStream = Generator[NodeExecutionEntry, None, None]
 def execute_node(
     db_client: "DatabaseManager",
     creds_manager: IntegrationCredentialsManager,
+    notification_service: "NotificationManager",
     data: NodeExecutionEntry,
     execution_stats: dict[str, Any] | None = None,
 ) -> ExecutionStream:
@@ -196,7 +204,7 @@ def execute_node(
         # Charge the user for the execution before running the block.
         # TODO: We assume the block is executed within 0 seconds.
         #       This is fine because for now, there is no block that is charged by time.
-        db_client.spend_credits(data, input_size + output_size, 0)
+        cost = db_client.spend_credits(data, input_size + output_size, 0)
 
         for output_name, output_data in node_block.execute(
             input_data, **extra_exec_kwargs
@@ -216,7 +224,21 @@ def execute_node(
             ):
                 yield execution
 
+        # Update execution status and spend credits
         update_execution(ExecutionStatus.COMPLETED)
+        notification_service.queue_notification(
+            NotificationEventModel(
+                user_id=user_id,
+                type=NotificationType.AGENT_RUN,
+                data=AgentRunData(
+                    agent_name=node_block.name,
+                    credits_used=cost,
+                    execution_time=0,
+                    graph_id=graph_id,
+                    node_count=1,
+                ),
+            )
+        )
 
     except Exception as e:
         error_msg = str(e)
@@ -480,6 +502,7 @@ class Executor:
         cls.pid = os.getpid()
         cls.db_client = get_db_client()
         cls.creds_manager = IntegrationCredentialsManager()
+        cls.notification_service = get_notification_service()
 
         # Set up shutdown handlers
         cls.shutdown_lock = threading.Lock()
@@ -554,7 +577,11 @@ class Executor:
         try:
             log_metadata.info(f"Start node execution {node_exec.node_exec_id}")
             for execution in execute_node(
-                cls.db_client, cls.creds_manager, node_exec, stats
+                db_client=cls.db_client,
+                creds_manager=cls.creds_manager,
+                notification_service=cls.notification_service,
+                data=node_exec,
+                execution_stats=stats,
             ):
                 q.add(execution)
             log_metadata.info(f"Finished node execution {node_exec.node_exec_id}")
@@ -964,6 +991,13 @@ def get_db_client() -> "DatabaseManager":
     from backend.executor import DatabaseManager
 
     return get_service_client(DatabaseManager)
+
+
+@thread_cached
+def get_notification_service() -> "NotificationManager":
+    from backend.notifications import NotificationManager
+
+    return get_service_client(NotificationManager)
 
 
 @contextmanager

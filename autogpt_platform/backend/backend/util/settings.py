@@ -140,6 +140,11 @@ class Config(UpdateTrackingModel["Config"], BaseSettings):
         description="The port for agent server API to run on",
     )
 
+    notification_service_port: int = Field(
+        default=8007,
+        description="The port for notification service daemon to run on",
+    )
+
     platform_base_url: str = Field(
         default="",
         description="Must be set so the application knows where it's hosted at. "

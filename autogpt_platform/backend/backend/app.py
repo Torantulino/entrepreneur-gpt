@@ -25,6 +25,7 @@ def main(**kwargs):
     """
 
     from backend.executor import DatabaseManager, ExecutionManager, ExecutionScheduler
+    from backend.notifications import NotificationManager
     from backend.server.rest_api import AgentServer
     from backend.server.ws_api import WebsocketServer
 
@@ -32,6 +33,7 @@ def main(**kwargs):
         DatabaseManager(),
         ExecutionManager(),
         ExecutionScheduler(),
+        NotificationManager(),
         WebsocketServer(),
         AgentServer(),
         **kwargs,
