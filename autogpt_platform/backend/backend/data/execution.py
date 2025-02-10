@@ -364,6 +364,26 @@ async def get_execution_results(graph_exec_id: str) -> list[ExecutionResult]:
     return res
 
 
+async def get_executions_in_timerange(
+    user_id: str, start_time: str, end_time: str
+) -> list[ExecutionResult]:
+    executions = await AgentGraphExecution.prisma().find_many(
+        where={
+            "AND": [
+                {
+                    "startedAt": {
+                        "gte": datetime.fromisoformat(start_time),
+                        "lte": datetime.fromisoformat(end_time),
+                    }
+                },
+                {"userId": user_id},
+            ]
+        },
+        include=GRAPH_EXECUTION_INCLUDE,
+    )
+    return [ExecutionResult.from_graph(execution) for execution in executions]
+
+
 LIST_SPLIT = "_$_"
 DICT_SPLIT = "_#_"
 OBJC_SPLIT = "_@_"

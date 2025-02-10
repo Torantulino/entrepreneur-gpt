@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timedelta
 from typing import Optional, cast
 
 from autogpt_libs.auth.models import DEFAULT_USER_ID
@@ -8,6 +9,7 @@ from prisma.models import User
 
 from backend.data.db import prisma
 from backend.data.model import UserIntegrations, UserMetadata, UserMetadataRaw
+from backend.data.notifications import NotificationPreference
 from backend.util.encryption import JSONCryptor
 
 logger = logging.getLogger(__name__)
@@ -130,3 +132,46 @@ async def migrate_and_encrypt_user_integrations():
             where={"id": user.id},
             data={"metadata": Json(raw_metadata)},
         )
+
+
+async def get_active_user_ids_in_timerange(start_time: str, end_time: str) -> list[str]:
+    users = await User.prisma().find_many(
+        where={
+            "AgentGraphExecutions": {
+                "some": {
+                    "createdAt": {
+                        "gte": datetime.fromisoformat(start_time),
+                        "lte": datetime.fromisoformat(end_time),
+                    }
+                }
+            }
+        },
+    )
+    return [user.id for user in users]
+
+
+async def get_active_users_ids() -> list[str]:
+    user_ids = await get_active_user_ids_in_timerange(
+        (datetime.now() - timedelta(days=30)).isoformat(),
+        datetime.now().isoformat(),
+    )
+    return user_ids
+
+
+async def get_user_notification_preference(user_id: str) -> NotificationPreference:
+    user = await User.prisma().find_unique_or_raise(
+        where={"id": user_id},
+        include={
+            "UserNotificationPreference": True,
+        },
+    )
+    notification_preference = NotificationPreference(
+        user_id=user.id,
+        email=user.email,
+        # TODO with the UI when it comes in
+        preferences={},
+        daily_limit=3,
+        emails_sent_today=0,
+        last_reset_date=datetime.now(),
+    )
+    return NotificationPreference.model_validate(notification_preference)

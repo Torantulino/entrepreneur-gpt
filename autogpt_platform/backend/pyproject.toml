@@ -30,7 +30,7 @@ openai = "^1.61.1"
 praw = "~7.8.1"
 prisma = "^0.15.0"
 psutil = "^6.1.0"
-pydantic = "^2.9.2"
+pydantic = {extras = ["email"], version = "^2.10.6"}
 pydantic-settings = "^2.3.4"
 pyro5 = "^5.15"
 pytest = "^8.2.1"

@@ -33,12 +33,14 @@ model User {
   AgentPreset AgentPreset[]
   UserAgent   UserAgent[]
 
-  Profile                Profile[]
-  StoreListing           StoreListing[]
-  StoreListingReview     StoreListingReview[]
-  StoreListingSubmission StoreListingSubmission[]
-  APIKeys                APIKey[]
-  IntegrationWebhooks    IntegrationWebhook[]
+  Profile                    Profile[]
+  StoreListing               StoreListing[]
+  StoreListingReview         StoreListingReview[]
+  StoreListingSubmission     StoreListingSubmission[]
+  APIKeys                    APIKey[]
+  IntegrationWebhooks        IntegrationWebhook[]
+  UserNotificationPreference UserNotificationPreference[]
+  UserNotificationBatch      UserNotificationBatch[]
 
   @@index([id])
   @@index([email])
@@ -108,6 +110,54 @@ model AgentPreset {
   AgentExecution AgentGraphExecution[]
 
   @@index([userId])
+}
+
+enum NotificationType {
+  AGENT_RUN
+  ZERO_BALANCE
+  LOW_BALANCE
+  BLOCK_EXECUTION_FAILED
+  CONTINUOUS_AGENT_ERROR
+  DAILY_SUMMARY
+  WEEKLY_SUMMARY
+  MONTHLY_SUMMARY
+}
+
+model NotificationEvent {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  UserNotificationBatch   UserNotificationBatch? @relation(fields: [userNotificationBatchId], references: [id])
+  userNotificationBatchId String?
+
+  type NotificationType
+  data Json
+}
+
+model UserNotificationBatch {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type NotificationType
+
+  notifications NotificationEvent[]
+}
+
+model UserNotificationPreference {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Dict[NotificationType, bool]
+  preferences Json @default("{}")
 }
 
 // For the library page
