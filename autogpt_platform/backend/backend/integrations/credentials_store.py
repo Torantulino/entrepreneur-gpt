@@ -145,6 +145,29 @@ mem0_credentials = APIKeyCredentials(
     expires_at=None,
 )
 
+apollo_credentials = APIKeyCredentials(
+    id="544c62b5-1d0f-4156-8fb4-9525f11656eb",
+    provider="apollo",
+    api_key=SecretStr(settings.secrets.apollo_api_key),
+    title="Use Credits for Apollo",
+    expires_at=None,
+)
+
+smartlead_credentials = APIKeyCredentials(
+    id="3bcdbda3-84a3-46af-8fdb-bfd2472298b8",
+    provider="smartlead",
+    api_key=SecretStr(settings.secrets.smartlead_api_key),
+    title="Use Credits for SmartLead",
+    expires_at=None,
+)
+
+zerobounce_credentials = APIKeyCredentials(
+    id="63a6e279-2dc2-448e-bf57-85776f7176dc",
+    provider="zerobounce",
+    api_key=SecretStr(settings.secrets.zerobounce_api_key),
+    title="Use Credits for ZeroBounce",
+    expires_at=None,
+)
 
 DEFAULT_CREDENTIALS = [
     ollama_credentials,
@@ -164,6 +187,9 @@ DEFAULT_CREDENTIALS = [
     mem0_credentials,
     nvidia_credentials,
     screenshotone_credentials,
+    apollo_credentials,
+    smartlead_credentials,
+    zerobounce_credentials,
 ]
 
 
@@ -231,6 +257,12 @@ class IntegrationCredentialsStore:
             all_credentials.append(screenshotone_credentials)
         if settings.secrets.mem0_api_key:
             all_credentials.append(mem0_credentials)
+        if settings.secrets.apollo_api_key:
+            all_credentials.append(apollo_credentials)
+        if settings.secrets.smartlead_api_key:
+            all_credentials.append(smartlead_credentials)
+        if settings.secrets.zerobounce_api_key:
+            all_credentials.append(zerobounce_credentials)
         return all_credentials
 
     def get_creds_by_id(self, user_id: str, credentials_id: str) -> Credentials | None:

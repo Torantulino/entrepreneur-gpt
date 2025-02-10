@@ -58,6 +58,7 @@ launchdarkly-server-sdk = "^9.8.0"
 mem0ai = "^0.1.48"
 todoist-api-python = "^2.1.7"
 moviepy = "^2.1.2"
+zerobouncesdk = "^1.1.1"
 gravitasml = "0.1.2"
 pika = "^1.3.2"
 

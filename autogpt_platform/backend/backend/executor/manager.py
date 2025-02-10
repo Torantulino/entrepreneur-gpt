@@ -201,6 +201,7 @@ def execute_node(
         for output_name, output_data in node_block.execute(
             input_data, **extra_exec_kwargs
         ):
+            output_data = json.convert_pydantic_to_json(output_data)
             output_size += len(json.dumps(output_data))
             log_metadata.info("Node produced output", **{output_name: output_data})
             db_client.upsert_execution_output(node_exec_id, output_name, output_data)
