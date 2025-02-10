@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from typing import Any, Literal, Optional, Type
 
 import prisma
+from autogpt_platform.backend.backend.blocks.llm import LlmModel
 from prisma.models import (
     AgentGraph,
     AgentGraphExecution,
@@ -71,6 +72,9 @@ class NodeModel(Node):
     def from_db(node: AgentNode):
         if not node.AgentBlock:
             raise ValueError(f"Invalid node {node.id}, invalid AgentBlock.")
+
+        NodeModel.migrate_llm_models(node)
+
         obj = NodeModel(
             id=node.id,
             block_id=node.AgentBlock.id,
@@ -84,6 +88,31 @@ class NodeModel(Node):
         obj.input_links = [Link.from_db(link) for link in node.Input or []]
         obj.output_links = [Link.from_db(link) for link in node.Output or []]
         return obj
+
+    @staticmethod
+    def migrate_llm_models(node: AgentNode):
+        if not node.AgentBlock:
+            return
+
+        migrated = False
+        data = json.loads(node.constantInput, target_type=dict[str, Any])
+        for name, field in node.AgentBlock.model_fields.items():
+            # Skip non-llm fields
+            if not field.annotation == LlmModel:
+                continue
+            # Skip valid model names
+            if data[name] in LlmModel.__members__.values():
+                continue
+            # Migrate invalid model names
+            data[name] = LlmModel.GPT4O
+            migrated = True
+
+        # Update node if migration occurred
+        if migrated:
+            node.constantInput = json.dumps(data)
+            _ = AgentNode.prisma().update(
+                where={"id": node.id}, data={"constantInput": node.constantInput}
+            )
 
     def is_triggered_by_event_type(self, event_type: str) -> bool:
         if not (block := get_block(self.block_id)):
