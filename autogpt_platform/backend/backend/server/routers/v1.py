@@ -55,10 +55,10 @@ from backend.server.model import (
     SetGraphActiveVersion,
     UpdatePermissionsRequest,
 )
+from backend.server.routers.otto.routes import otto_router
 from backend.server.utils import get_user_id
 from backend.util.service import get_service_client
 from backend.util.settings import Settings
-from backend.server.routers.otto.routes import otto_router
 
 if TYPE_CHECKING:
     from backend.data.model import Credentials
