@@ -7,14 +7,16 @@ Below is a comprehensive list of all available blocks, categorized by their prim
 ## Basic Operations
 | Block Name | Description |
 |------------|-------------|
-| [Store Value](basic.md#store-value) | Stores and forwards a value |
-| [Print to Console](basic.md#print-to-console) | Outputs text to the console for debugging |
-| [Find in Dictionary](basic.md#find-in-dictionary) | Looks up a value in a dictionary or list |
-| [Agent Input](basic.md#agent-input) | Accepts user input in a workflow |
-| [Agent Output](basic.md#agent-output) | Records and formats workflow results |
-| [Add to Dictionary](basic.md#add-to-dictionary) | Adds a new key-value pair to a dictionary |
-| [Add to List](basic.md#add-to-list) | Adds a new entry to a list |
-| [Note](basic.md#note) | Displays a sticky note in the workflow |
+| [Store Value](update/basic.md#store-value) | Stores and forwards a value |
+| [Print to Console](update/basic.md#print-to-console) | Outputs text to the console for debugging |
+| [Find in Dictionary](update/basic.md#find-in-dictionary) | Looks up a value in a dictionary or list |
+| [Agent Input](update/basic.md#agent-input) | Accepts user input in a workflow |
+| [Agent Output](update/basic.md#agent-output) | Records and formats workflow results |
+| [Add to Dictionary](update/basic.md#add-to-dictionary) | Adds a new key-value pair to a dictionary |
+| [Add to List](update/basic.md#add-to-list) | Adds a new entry to a list |
+| [Note](update/basic.md#note) | Displays a sticky note in the workflow |
+| [Create Dictionary](update/basic.md#create-dictionary) | Creates a new dictionary with specified key-value pairs |
+| [Create List](update/basic.md#create-list) | Creates a new list with specified values |
 
 ## Data Processing
 | Block Name | Description |
@@ -39,11 +41,13 @@ Below is a comprehensive list of all available blocks, categorized by their prim
 | [AI Text Summarizer](llm.md#ai-text-summarizer) | Summarizes long texts using LLMs |
 | [AI Conversation](llm.md#ai-conversation) | Facilitates multi-turn conversations with LLMs |
 | [AI List Generator](llm.md#ai-list-generator) | Creates lists based on prompts using LLMs |
+| [AI Music Generator](update/ai_music_generator.md#ai-music-generator) | Creates unique music using AI based on text descriptions |
 
 ## Web and API Interactions
 | Block Name | Description |
 |------------|-------------|
-| [Send Web Request](http.md#send-web-request) | Makes HTTP requests to specified web addresses |
+| [Send Web Request](update/http.md#web-request-sender) | Makes HTTP requests to specified web addresses |
+| [HTTP Request Handler](update/helpers/http.md#http-request-handler) | Simplifies making HTTP GET requests to web services |
 | [Read RSS Feed](rss.md#read-rss-feed) | Retrieves and processes entries from RSS feeds |
 | [Get Weather Information](search.md#get-weather-information) | Fetches current weather data for a location |
 | [Google Maps Search](google_maps.md#google-maps-search) | Searches for local businesses using Google Maps API |
@@ -81,19 +85,37 @@ Below is a comprehensive list of all available blocks, categorized by their prim
 ## Media Generation
 | Block Name | Description |
 |------------|-------------|
-| [Ideogram Model](ideogram.md#ideogram-model) | Generates images based on text prompts |
+| [Ideogram Model](update/ideogram.md#ideogram-model) | Generates images based on text prompts |
 | [Create Talking Avatar Video](talking_head.md#create-talking-avatar-video) | Creates videos with talking avatars |
 | [Unreal Text to Speech](text_to_speech_block.md#unreal-text-to-speech) | Converts text to speech using Unreal Speech API |
 | [AI Shortform Video Creator](ai_shortform_video_block.md#ai-shortform-video-creator) | Generates short-form videos using AI |
 | [Replicate Flux Advanced Model](replicate_flux_advanced.md#replicate-flux-advanced-model) | Creates images using Replicate's Flux models |
+| [AI Music Generator](update/ai_music_generator.md#ai-music-generator) | Creates unique music using AI based on text descriptions |
 
 ## Miscellaneous
 | Block Name | Description |
 |------------|-------------|
 | [Transcribe YouTube Video](youtube.md#transcribe-youtube-video) | Transcribes audio from YouTube videos |
 | [Send Email](email_block.md#send-email) | Sends emails using SMTP |
-| [Condition Block](branching.md#condition-block) | Evaluates conditions for workflow branching |
-| [Step Through Items](iteration.md#step-through-items) | Iterates through lists or dictionaries |
+| [Condition Block](update/branching.md#condition-block) | Evaluates conditions for workflow branching |
+| [Step Through Items](update/iteration.md#step-through-items) | Iterates through lists or dictionaries |
+
+## HubSpot Integration
+| Block Name | Description |
+|------------|-------------|
+| [HubSpot Company Manager](update/hubspot/company.md#hubspot-company-manager) | Manages company records in HubSpot CRM |
+| [HubSpot Contact Manager](update/hubspot/contact.md#hubspot-contact-manager) | Manages contact information in HubSpot CRM |
+| [HubSpot Engagement Manager](update/hubspot/engagement.md#hubspot-engagement-manager) | Tracks and manages customer interactions in HubSpot |
+
+## Code Management
+| Block Name | Description |
+|------------|-------------|
+| [Code Executor](update/code_executor.md#code-executor) | Executes code snippets in a secure sandbox environment |
+
+## Compass Integration
+| Block Name | Description |
+|------------|-------------|
+| [Compass AI Trigger](update/compass/triggers.md#compass-ai-trigger) | Processes transcription content from Compass hardware |
 
 ## Google Services
 | Block Name | Description |
