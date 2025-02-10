@@ -611,6 +611,7 @@ class ScheduleCreationRequest(pydantic.BaseModel):
     cron: str
     input_data: dict[Any, Any]
     graph_id: str
+    graph_version: int
 
 
 @v1_router.post(
@@ -622,10 +623,13 @@ async def create_schedule(
     user_id: Annotated[str, Depends(get_user_id)],
     schedule: ScheduleCreationRequest,
 ) -> scheduler.JobInfo:
-    graph = await graph_db.get_graph(schedule.graph_id, user_id=user_id)
+    graph = await graph_db.get_graph(
+        schedule.graph_id, schedule.graph_version, user_id=user_id
+    )
     if not graph:
         raise HTTPException(
-            status_code=404, detail=f"Graph #{schedule.graph_id} not found."
+            status_code=404,
+            detail=f"Graph #{schedule.graph_id} v.{schedule.graph_version} not found.",
         )
 
     return await asyncio.to_thread(

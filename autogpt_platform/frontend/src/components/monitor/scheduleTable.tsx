@@ -31,6 +31,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { TextRenderer } from "../ui/render";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 interface SchedulesTableProps {
   schedules: Schedule[];
@@ -53,6 +55,8 @@ export const SchedulesTable = ({
   const router = useRouter();
   const cron_manager = new CronExpressionManager();
   const [selectedAgent, setSelectedAgent] = useState<string>("");
+  const [selectedVersion, setSelectedVersion] = useState<number>(0);
+  const [maxVersion, setMaxVersion] = useState<number>(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState<string>("");
@@ -86,13 +90,38 @@ export const SchedulesTable = ({
 
   const handleAgentSelect = (agentId: string) => {
     setSelectedAgent(agentId);
+    const agent = agents.find((a) => a.id === agentId);
+    setMaxVersion(agent!.version);
+    setSelectedVersion(agent!.version);
+  };
+
+  const handleVersionSelect = (version: string) => {
+    setSelectedVersion(parseInt(version));
   };
 
   const handleSchedule = async () => {
+    if (!selectedAgent || !selectedVersion) {
+      toast({
+        title: "Invalid Input",
+        description: "Please select an agent and a version.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (selectedVersion < 1 || selectedVersion > maxVersion) {
+      toast({
+        title: "Invalid Version",
+        description: `Please select a version between 1 and ${maxVersion}.`,
+        variant: "destructive",
+      });
+      return;
+    }
     setIsLoading(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 100));
-      router.push(`/build?flowID=${selectedAgent}&open_scheduling=true`);
+      router.push(
+        `/build?flowID=${selectedAgent}&flowVersion=${selectedVersion}&open_scheduling=true`,
+      );
     } catch (error) {
       console.error("Navigation error:", error);
     }
@@ -117,6 +146,18 @@ export const SchedulesTable = ({
               ))}
             </SelectContent>
           </Select>
+          <Label className="mt-4">
+            Select version between 1 and {maxVersion}
+          </Label>
+          <Input
+            type="number"
+            min={1}
+            max={selectedAgent ? maxVersion : 0}
+            value={selectedVersion}
+            onChange={(e) => handleVersionSelect(e.target.value)}
+            placeholder="Select version"
+            className="w-full"
+          />
           <Button
             onClick={handleSchedule}
             disabled={isLoading || !selectedAgent}
@@ -165,6 +206,7 @@ export const SchedulesTable = ({
               >
                 Graph Name
               </TableHead>
+              <TableHead className="cursor-pointer">Graph Version</TableHead>
               <TableHead
                 onClick={() => onSort("next_run_time")}
                 className="cursor-pointer"
@@ -198,6 +240,7 @@ export const SchedulesTable = ({
                     {agents.find((a) => a.id === schedule.graph_id)?.name ||
                       schedule.graph_id}
                   </TableCell>
+                  <TableCell>{schedule.graph_version}</TableCell>
                   <TableCell>
                     {new Date(schedule.next_run_time).toLocaleString()}
                   </TableCell>
