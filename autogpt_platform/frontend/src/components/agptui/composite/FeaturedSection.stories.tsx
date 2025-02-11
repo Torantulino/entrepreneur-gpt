@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { FeaturedAgent, FeaturedSection } from "./FeaturedSection";
-import { userEvent, within, expect } from "@storybook/test";
+import { FeaturedSection } from "./FeaturedSection";
+import { userEvent, within } from "@storybook/test";
+import { StoreAgent } from "@/lib/autogpt-server-api";
 
 const meta = {
   title: "AGPT UI/Composite/Featured Agents",
@@ -15,7 +16,6 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     featuredAgents: { control: "object" },
-    // onCardClick: { action: "clicked" },
   },
 } satisfies Meta<typeof FeaturedSection>;
 
@@ -93,7 +93,7 @@ const mockFeaturedAgents = [
       "https://framerusercontent.com/images/KCIpxr9f97EGJgpaoqnjKsrOPwI.jpg",
     slug: "quicktask",
   },
-] satisfies FeaturedAgent[];
+] satisfies StoreAgent[];
 
 export const Default: Story = {
   args: {

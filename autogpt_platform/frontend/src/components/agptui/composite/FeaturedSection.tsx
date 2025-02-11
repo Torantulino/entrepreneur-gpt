@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { FeaturedStoreCard } from "@/components/agptui/FeaturedStoreCard";
+import { FeaturedAgentCard } from "@/components/agptui/FeaturedAgentCard";
 import {
   Carousel,
   CarouselContent,
@@ -11,7 +11,8 @@ import {
   CarouselIndicator,
 } from "@/components/ui/carousel";
 import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
+import { StoreAgent } from "@/lib/autogpt-server-api";
+import Link from "next/link";
 
 const BACKGROUND_COLORS = [
   "bg-violet-200 dark:bg-violet-800", // #ddd6fe / #5b21b6
@@ -19,33 +20,14 @@ const BACKGROUND_COLORS = [
   "bg-green-200 dark:bg-green-800", // #bbf7d0 / #065f46
 ];
 
-export interface FeaturedAgent {
-  slug: string;
-  agent_name: string;
-  agent_image: string;
-  creator: string;
-  creator_avatar: string;
-  sub_heading: string;
-  description: string;
-  runs: number;
-  rating: number;
-}
-
 interface FeaturedSectionProps {
-  featuredAgents: FeaturedAgent[];
+  featuredAgents: StoreAgent[];
 }
 
 export const FeaturedSection: React.FC<FeaturedSectionProps> = ({
   featuredAgents,
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const router = useRouter();
-
-  const handleCardClick = (creator: string, slug: string) => {
-    router.push(
-      `/marketplace/agent/${encodeURIComponent(creator)}/${encodeURIComponent(slug)}`,
-    );
-  };
 
   const handlePrevSlide = useCallback(() => {
     setCurrentSlide((prev) =>
@@ -84,17 +66,14 @@ export const FeaturedSection: React.FC<FeaturedSectionProps> = ({
                   key={index}
                   className="max-w-[460px] flex-[0_0_auto]"
                 >
-                  <FeaturedStoreCard
-                    agentName={agent.agent_name}
-                    subHeading={agent.sub_heading}
-                    agentImage={agent.agent_image}
-                    creatorName={agent.creator}
-                    description={agent.description}
-                    runs={agent.runs}
-                    rating={agent.rating}
-                    backgroundColor={getBackgroundColor(index)}
-                    onClick={() => handleCardClick(agent.creator, agent.slug)}
-                  />
+                  <Link
+                    href={`/marketplace/agent/${encodeURIComponent(agent.creator)}/${encodeURIComponent(agent.slug)}`}
+                  >
+                    <FeaturedAgentCard
+                      agent={agent}
+                      backgroundColor={getBackgroundColor(index)}
+                    />
+                  </Link>
                 </CarouselItem>
               ))}
             </CarouselContent>

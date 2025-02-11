@@ -1,9 +1,6 @@
 import * as React from "react";
 import { HeroSection } from "@/components/agptui/composite/HeroSection";
-import {
-  FeaturedSection,
-  FeaturedAgent,
-} from "@/components/agptui/composite/FeaturedSection";
+import { FeaturedSection } from "@/components/agptui/composite/FeaturedSection";
 import {
   AgentsSection,
   Agent,
@@ -155,9 +152,7 @@ export default async function Page({}: {}) {
     <div className="mx-auto w-screen max-w-[1360px]">
       <main className="px-4">
         <HeroSection />
-        <FeaturedSection
-          featuredAgents={featuredAgents.agents as FeaturedAgent[]}
-        />
+        <FeaturedSection featuredAgents={featuredAgents.agents} />
         <Separator />
         <AgentsSection
           sectionTitle="Top Agents"
