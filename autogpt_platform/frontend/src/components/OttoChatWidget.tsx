@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import useSupabase from "../hooks/useSupabase";
 import useAgentGraph from "../hooks/useAgentGraph";
@@ -32,6 +32,7 @@ const OttoChatWidget = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user, supabase } = useSupabase();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const flowID = searchParams.get("flowID");
   const { nodes, edges } = useAgentGraph(flowID || undefined);
   const { toast } = useToast();
@@ -158,8 +159,8 @@ const OttoChatWidget = () => {
     }
   };
 
-  // Don't render the chat widget if we're in local mode
-  if (process.env.NEXT_PUBLIC_BEHAVE_AS !== "CLOUD") {
+  // Don't render the chat widget if we're not on the build page or in local mode
+  if (process.env.NEXT_PUBLIC_BEHAVE_AS !== "CLOUD" || pathname !== "/build") {
     return null;
   }
 
