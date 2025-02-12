@@ -140,15 +140,17 @@ async def migrate_and_encrypt_user_integrations():
         )
 
 
-async def get_active_user_ids_in_timerange(start_time: str, end_time: str) -> list[str]:
+async def get_active_user_ids_in_timerange(
+    start_time: datetime, end_time: datetime
+) -> list[str]:
     try:
         users = await User.prisma().find_many(
             where={
                 "AgentGraphExecutions": {
                     "some": {
                         "createdAt": {
-                            "gte": datetime.fromisoformat(start_time),
-                            "lte": datetime.fromisoformat(end_time),
+                            "gte": start_time,
+                            "lte": end_time,
                         }
                     }
                 }
@@ -164,8 +166,8 @@ async def get_active_user_ids_in_timerange(start_time: str, end_time: str) -> li
 
 async def get_active_users_ids() -> list[str]:
     user_ids = await get_active_user_ids_in_timerange(
-        (datetime.now() - timedelta(days=30)).isoformat(),
-        datetime.now().isoformat(),
+        datetime.now() - timedelta(days=30),
+        datetime.now(),
     )
     return user_ids
 

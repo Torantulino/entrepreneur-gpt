@@ -6,6 +6,7 @@ import threading
 import time
 import typing
 from abc import ABC, abstractmethod
+from datetime import datetime
 from enum import Enum
 from types import NoneType, UnionType
 from typing import (
@@ -307,3 +308,16 @@ def _pydantic_models_from_type_annotation(annotation) -> Iterator[type[BaseModel
                 yield annotype
             elif annotype not in builtin_types and not issubclass(annotype, Enum):
                 raise TypeError(f"Unsupported type encountered: {annotype}")
+
+
+# Register (de)serializers for datetime objects
+pyro.register_class_to_dict(
+    datetime,
+    lambda dt: {
+        "__class__": datetime.__qualname__,
+        "iso": cast(datetime, dt).isoformat(),
+    },
+)
+pyro.register_dict_to_class(
+    datetime.__qualname__, lambda _, dict: datetime.fromisoformat(dict["iso"])
+)

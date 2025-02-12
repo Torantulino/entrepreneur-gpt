@@ -366,7 +366,7 @@ async def get_execution_results(graph_exec_id: str) -> list[ExecutionResult]:
 
 
 async def get_executions_in_timerange(
-    user_id: str, start_time: str, end_time: str
+    user_id: str, start_time: datetime, end_time: datetime
 ) -> list[ExecutionResult]:
     try:
         executions = await AgentGraphExecution.prisma().find_many(
@@ -374,8 +374,8 @@ async def get_executions_in_timerange(
                 "AND": [
                     {
                         "startedAt": {
-                            "gte": datetime.fromisoformat(start_time),
-                            "lte": datetime.fromisoformat(end_time),
+                            "gte": start_time,
+                            "lte": end_time,
                         }
                     },
                     {"userId": user_id},
