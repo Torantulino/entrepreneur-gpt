@@ -263,7 +263,7 @@ export const PublishAgentPopout: React.FC<PublishAgentPopoutProps> = ({
                   onClose={handleClose}
                   onDone={handleClose}
                   onViewProgress={() => {
-                    router.push("/marketplace/dashboard");
+                    router.push("/profile/dashboard");
                     handleClose();
                   }}
                 />

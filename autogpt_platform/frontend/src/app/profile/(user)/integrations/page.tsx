@@ -2,10 +2,9 @@
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useCallback, useContext, useMemo, useState } from "react";
-import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { IconKey, IconUser } from "@/components/ui/icons";
-import { LogOutIcon, Trash2Icon } from "lucide-react";
+import { Trash2Icon } from "lucide-react";
 import { providerIcons } from "@/components/integrations/credentials-input";
 import { CredentialsProvidersContext } from "@/components/integrations/credentials-provider";
 import {
@@ -151,16 +150,6 @@ export default function PrivatePage() {
 
   return (
     <div className="mx-auto max-w-3xl md:py-8">
-      <div className="flex items-center justify-between">
-        <p>
-          Hello <span data-testid="profile-email">{user.email}</span>
-        </p>
-        <Button onClick={() => supabase.auth.signOut()}>
-          <LogOutIcon className="mr-1.5 size-4" />
-          Log out
-        </Button>
-      </div>
-      <Separator className="my-6" />
       <h2 className="mb-4 text-lg">Connections & Credentials</h2>
       <Table>
         <TableHeader>
@@ -189,7 +178,7 @@ export default function PrivatePage() {
                     {
                       oauth2: "OAuth2 credentials",
                       api_key: "API key",
-                      user_password: "User password",
+                      user_password: "Username & password",
                     }[cred.type]
                   }{" "}
                   - <code>{cred.id}</code>

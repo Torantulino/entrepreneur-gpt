@@ -1,6 +1,8 @@
 import json
 from typing import Any, Type, TypeVar, cast, get_args, get_origin
 
+from prisma import Json as PrismaJson
+
 
 class ConversionError(ValueError):
     pass
@@ -188,6 +190,8 @@ def type_match(value: Any, target_type: Type[T]) -> T:
 
 def convert(value: Any, target_type: Type[T]) -> T:
     try:
+        if isinstance(value, PrismaJson):
+            value = value.data
         return cast(T, _try_convert(value, target_type, raise_on_mismatch=False))
     except Exception as e:
         raise ConversionError(f"Failed to convert {value} to {target_type}") from e

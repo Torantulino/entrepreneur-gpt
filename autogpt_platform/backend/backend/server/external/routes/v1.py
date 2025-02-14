@@ -1,9 +1,9 @@
 import logging
 from collections import defaultdict
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Annotated, Any, Dict, List, Optional, Sequence
 
 from autogpt_libs.utils.cache import thread_cached
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
 from prisma.enums import AgentExecutionStatus, APIKeyPermission
 from typing_extensions import TypedDict
 
@@ -101,7 +101,7 @@ def execute_graph_block(
 def execute_graph(
     graph_id: str,
     graph_version: int,
-    node_input: dict[Any, Any],
+    node_input: Annotated[dict[str, Any], Body(..., embed=True, default_factory=dict)],
     api_key: APIKey = Depends(require_permission(APIKeyPermission.EXECUTE_GRAPH)),
 ) -> dict[str, Any]:
     try:
@@ -113,7 +113,7 @@ def execute_graph(
         )
         return {"id": graph_exec.graph_exec_id}
     except Exception as e:
-        msg = e.__str__().encode().decode("unicode_escape")
+        msg = str(e).encode().decode("unicode_escape")
         raise HTTPException(status_code=400, detail=msg)
 
 

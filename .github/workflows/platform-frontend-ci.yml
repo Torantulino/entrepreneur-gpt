@@ -77,8 +77,8 @@ jobs:
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@main
         with:
-          large-packages: false  # slow
-          docker-images: false  # limited benefit
+          large-packages: false # slow
+          docker-images: false # limited benefit
 
       - name: Copy default supabase .env
         run: |
@@ -104,11 +104,12 @@ jobs:
         run: yarn playwright install --with-deps ${{ matrix.browser }}
 
       - name: Run tests
+        timeout-minutes: 20
         run: |
           yarn test --project=${{ matrix.browser }}
 
-      - name: Print Docker Compose logs in debug mode
-        if: runner.debug
+      - name: Print Final Docker Compose logs
+        if: always()
         run: |
           docker compose -f ../docker-compose.yml logs
 

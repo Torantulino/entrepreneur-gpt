@@ -22,7 +22,7 @@ To run the AutoGPT Platform, follow these steps:
 
 2. Run the following command:
    ```
-   git submodule update --init --recursive
+   git submodule update --init --recursive --progress
    ```
    This command will initialize and update the submodules in the repository. The `supabase` folder will be cloned to the root directory.
 

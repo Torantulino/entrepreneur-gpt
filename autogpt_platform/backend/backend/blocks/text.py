@@ -76,6 +76,8 @@ class ExtractTextInformationBlock(Block):
     class Output(BlockSchema):
         positive: str = SchemaField(description="Extracted text")
         negative: str = SchemaField(description="Original text")
+        matched_results: list[str] = SchemaField(description="List of matched results")
+        matched_count: int = SchemaField(description="Number of matched results")
 
     def __init__(self):
         super().__init__(
@@ -103,13 +105,31 @@ class ExtractTextInformationBlock(Block):
                 },
             ],
             test_output=[
+                # Test case 1
                 ("positive", "World!"),
+                ("matched_results", ["World!"]),
+                ("matched_count", 1),
+                # Test case 2
                 ("positive", "Hello, World!"),
+                ("matched_results", ["Hello, World!"]),
+                ("matched_count", 1),
+                # Test case 3
                 ("negative", "Hello, World!"),
+                ("matched_results", []),
+                ("matched_count", 0),
+                # Test case 4
                 ("positive", "Hello,"),
+                ("matched_results", ["Hello,"]),
+                ("matched_count", 1),
+                # Test case 5
                 ("positive", "World!!"),
+                ("matched_results", ["World!!"]),
+                ("matched_count", 1),
+                # Test case 6
                 ("positive", "World!!"),
                 ("positive", "Earth!!"),
+                ("matched_results", ["World!!", "Earth!!"]),
+                ("matched_count", 2),
             ],
         )
 
@@ -130,12 +150,15 @@ class ExtractTextInformationBlock(Block):
             for match in re.finditer(input_data.pattern, txt, flags)
             if input_data.group <= len(match.groups())
         ]
+        if not input_data.find_all:
+            matches = matches[:1]
         for match in matches:
             yield "positive", match
-            if not input_data.find_all:
-                return
         if not matches:
             yield "negative", input_data.text
+
+        yield "matched_results", matches
+        yield "matched_count", len(matches)
 
 
 class FillTextTemplateBlock(Block):

@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { AgentTable } from "@/components/agptui/AgentTable";
-import { AgentTableRowProps } from "@/components/agptui/AgentTableRow";
 import { Button } from "@/components/agptui/Button";
 import { Separator } from "@/components/ui/separator";
 import { StatusType } from "@/components/agptui/Status";

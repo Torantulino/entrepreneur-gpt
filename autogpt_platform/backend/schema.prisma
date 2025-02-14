@@ -23,15 +23,26 @@ model User {
   stripeCustomerId String?
   topUpConfig      Json?
 
+  maxEmailsPerDay              Int     @default(3)
+  notifyOnAgentRun             Boolean @default(true)
+  notifyOnZeroBalance          Boolean @default(true)
+  notifyOnLowBalance           Boolean @default(true)
+  notifyOnBlockExecutionFailed Boolean @default(true)
+  notifyOnContinuousAgentError Boolean @default(true)
+  notifyOnDailySummary         Boolean @default(true)
+  notifyOnWeeklySummary        Boolean @default(true)
+  notifyOnMonthlySummary       Boolean @default(true)
+
   // Relations
+
   AgentGraphs          AgentGraph[]
   AgentGraphExecutions AgentGraphExecution[]
   AnalyticsDetails     AnalyticsDetails[]
   AnalyticsMetrics     AnalyticsMetrics[]
   CreditTransaction    CreditTransaction[]
 
-  AgentPreset AgentPreset[]
-  UserAgent   UserAgent[]
+  AgentPreset  AgentPreset[]
+  LibraryAgent LibraryAgent[]
 
   Profile                Profile[]
   StoreListing           StoreListing[]
@@ -39,6 +50,7 @@ model User {
   StoreListingSubmission StoreListingSubmission[]
   APIKeys                APIKey[]
   IntegrationWebhooks    IntegrationWebhook[]
+  UserNotificationBatch  UserNotificationBatch[]
 
   @@index([id])
   @@index([email])
@@ -66,7 +78,7 @@ model AgentGraph {
   AgentGraphExecution AgentGraphExecution[]
 
   AgentPreset         AgentPreset[]
-  UserAgent           UserAgent[]
+  LibraryAgent        LibraryAgent[]
   StoreListing        StoreListing[]
   StoreListingVersion StoreListingVersion?
 
@@ -104,15 +116,56 @@ model AgentPreset {
   Agent        AgentGraph @relation(fields: [agentId, agentVersion], references: [id, version], onDelete: Cascade)
 
   InputPresets   AgentNodeExecutionInputOutput[] @relation("AgentPresetsInputData")
-  UserAgents     UserAgent[]
+  LibraryAgents  LibraryAgent[]
   AgentExecution AgentGraphExecution[]
+
+  isDeleted Boolean @default(false)
 
   @@index([userId])
 }
 
+enum NotificationType {
+  AGENT_RUN
+  ZERO_BALANCE
+  LOW_BALANCE
+  BLOCK_EXECUTION_FAILED
+  CONTINUOUS_AGENT_ERROR
+  DAILY_SUMMARY
+  WEEKLY_SUMMARY
+  MONTHLY_SUMMARY
+}
+
+model NotificationEvent {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  UserNotificationBatch   UserNotificationBatch? @relation(fields: [userNotificationBatchId], references: [id])
+  userNotificationBatchId String?
+
+  type NotificationType
+  data Json
+}
+
+model UserNotificationBatch {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type NotificationType
+
+  notifications NotificationEvent[]
+
+  // Each user can only have one batch of a notification type at a time
+  @@unique([userId, type])
+}
+
 // For the library page
 // It is a user controlled list of agents, that they will see in there library
-model UserAgent {
+model LibraryAgent {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -126,6 +179,8 @@ model UserAgent {
 
   agentPresetId String?
   AgentPreset   AgentPreset? @relation(fields: [agentPresetId], references: [id])
+
+  useGraphIsActiveVersion Boolean @default(false)
 
   isFavorite      Boolean @default(false)
   isCreatedByUser Boolean @default(false)
@@ -158,15 +213,13 @@ model AgentNode {
   // List of produced output, that the child node should be executed.
   Output AgentNodeLink[] @relation("AgentNodeSource")
 
-  // JSON serialized dict[str, str] containing predefined input values.
-  constantInput String @default("{}")
+  constantInput Json @default("{}")
 
   // For webhook-triggered blocks: reference to the webhook that triggers the node
   webhookId String?
   Webhook   IntegrationWebhook? @relation(fields: [webhookId], references: [id])
 
-  // JSON serialized dict[str, str] containing the node metadata.
-  metadata String @default("{}")
+  metadata Json @default("{}")
 
   ExecutionHistory AgentNodeExecution[]
 
@@ -239,7 +292,7 @@ model AgentGraphExecution {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  stats         String? // JSON serialized object
+  stats         Json?
   AgentPreset   AgentPreset? @relation(fields: [agentPresetId], references: [id])
   agentPresetId String?
 
@@ -261,14 +314,13 @@ model AgentNodeExecution {
   Output AgentNodeExecutionInputOutput[] @relation("AgentNodeExecutionOutput")
 
   executionStatus AgentExecutionStatus @default(COMPLETED)
-  // Final JSON serialized input data for the node execution.
-  executionData   String?
+  executionData   Json?
   addedTime       DateTime             @default(now())
   queuedTime      DateTime?
   startedTime     DateTime?
   endedTime       DateTime?
 
-  stats String? // JSON serialized object
+  stats Json?
 
   @@index([agentGraphExecutionId])
   @@index([agentNodeId])
@@ -279,7 +331,7 @@ model AgentNodeExecutionInputOutput {
   id String @id @default(uuid())
 
   name String
-  data String
+  data Json
   time DateTime @default(now())
 
   // Prisma requires explicit back-references.

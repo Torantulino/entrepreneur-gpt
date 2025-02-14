@@ -4,7 +4,7 @@ from datetime import datetime
 
 import prisma.enums
 from faker import Faker
-from prisma import Prisma
+from prisma import Json, Prisma
 
 faker = Faker()
 
@@ -110,8 +110,8 @@ async def main():
                     "agentBlockId": block.id,
                     "agentGraphId": graph.id,
                     "agentGraphVersion": graph.version,
-                    "constantInput": "{}",
-                    "metadata": "{}",
+                    "constantInput": Json({}),
+                    "metadata": Json({}),
                 }
             )
             agent_nodes.append(node)
@@ -140,10 +140,10 @@ async def main():
     print(f"Inserting {NUM_USERS * MAX_AGENTS_PER_USER} user agents")
     for user in users:
         num_agents = random.randint(MIN_AGENTS_PER_USER, MAX_AGENTS_PER_USER)
-        for _ in range(num_agents):  # Create 1 UserAgent per user
+        for _ in range(num_agents):  # Create 1 LibraryAgent per user
             graph = random.choice(agent_graphs)
             preset = random.choice(agent_presets)
-            user_agent = await db.useragent.create(
+            user_agent = await db.libraryagent.create(
                 data={
                     "userId": user.id,
                     "agentId": graph.id,
