@@ -3,8 +3,6 @@ import { Navbar } from "./Navbar";
 import { userEvent, within } from "@storybook/test";
 import { IconType } from "../ui/icons";
 import { ProfileDetails } from "@/lib/autogpt-server-api/types";
-// You can't import this here, jest is not available in storybook and will crash it
-// import { jest } from "@jest/globals";
 
 // Mock the API responses
 const mockProfileData: ProfileDetails = {
@@ -14,40 +12,6 @@ const mockProfileData: ProfileDetails = {
   links: [],
   avatar_url: "https://avatars.githubusercontent.com/u/123456789?v=4",
 };
-
-const mockCreditData = {
-  credits: 1500,
-};
-
-// Mock the API module
-// jest.mock("@/lib/autogpt-server-api", () => {
-//   return function () {
-//     return {
-//       getStoreProfile: () => Promise.resolve(mockProfileData),
-//       getUserCredit: () => Promise.resolve(mockCreditData),
-//     };
-//   };
-// });
-
-const meta = {
-  title: "AGPT UI/Navbar",
-  component: Navbar,
-  parameters: {
-    layout: "fullscreen",
-  },
-  tags: ["autodocs"],
-  argTypes: {
-    // isLoggedIn: { control: "boolean" },
-    // avatarSrc: { control: "text" },
-    links: { control: "object" },
-    // activeLink: { control: "text" },
-    menuItemGroups: { control: "object" },
-    // params: { control: { type: "object", defaultValue: { lang: "en" } } },
-  },
-} satisfies Meta<typeof Navbar>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
 
 const defaultMenuItemGroups = [
   {
@@ -89,41 +53,95 @@ const defaultLinks = [
   { name: "Build", href: "/builder" },
 ];
 
+const meta = {
+  title: "AGPT UI/Navbar",
+  component: Navbar,
+  parameters: {
+    layout: "fullscreen",
+  },
+  tags: ["autodocs"],
+  argTypes: {
+    links: { control: "object" },
+    menuItemGroups: { control: "object" },
+    mockUser: { control: "object" },
+    mockClientProps: { control: "object" },
+  },
+} satisfies Meta<typeof Navbar>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
 export const Default: Story = {
   args: {
-    // params: { lang: "en" },
-    // isLoggedIn: true,
     links: defaultLinks,
-    // activeLink: "/marketplace",
-    // avatarSrc: mockProfileData.avatar_url,
     menuItemGroups: defaultMenuItemGroups,
+    mockUser: {
+      id: "123",
+      email: "test@test.com",
+      user_metadata: {
+        name: "Test User",
+      },
+      app_metadata: {
+        provider: "email",
+      },
+      aud: "test",
+      created_at: new Date().toISOString(),
+    },
+    mockClientProps: {
+      credits: 1500,
+      profile: mockProfileData,
+    },
+  },
+  parameters: {
+    mockBackend: {
+      credits: 1500,
+      profile: mockProfileData,
+    },
   },
 };
 
-export const WithActiveLink: Story = {
+export const WithCredits: Story = {
   args: {
     ...Default.args,
-    // activeLink: "/library",
+  },
+  parameters: {
+    mockBackend: {
+      credits: 1500,
+    },
   },
 };
 
-export const LongUserName: Story = {
+export const WithLargeCredits: Story = {
   args: {
     ...Default.args,
-    // avatarSrc: "https://avatars.githubusercontent.com/u/987654321?v=4",
+  },
+  parameters: {
+    mockBackend: {
+      credits: 999999,
+    },
   },
 };
 
-export const NoAvatar: Story = {
+export const WithZeroCredits: Story = {
   args: {
     ...Default.args,
-    // avatarSrc: undefined,
+  },
+  parameters: {
+    mockBackend: {
+      credits: 0,
+    },
   },
 };
 
 export const WithInteraction: Story = {
   args: {
     ...Default.args,
+  },
+  parameters: {
+    mockBackend: {
+      credits: 1500,
+      profile: mockProfileData,
+    },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -133,31 +151,5 @@ export const WithInteraction: Story = {
 
     // Wait for the popover to appear
     await canvas.findByText("Edit profile");
-  },
-};
-
-export const NotLoggedIn: Story = {
-  args: {
-    ...Default.args,
-    // isLoggedIn: false,
-    // avatarSrc: undefined,
-  },
-};
-
-export const WithCredits: Story = {
-  args: {
-    ...Default.args,
-  },
-};
-
-export const WithLargeCredits: Story = {
-  args: {
-    ...Default.args,
-  },
-};
-
-export const WithZeroCredits: Story = {
-  args: {
-    ...Default.args,
   },
 };
