@@ -93,7 +93,10 @@ class Config(UpdateTrackingModel["Config"], BaseSettings):
         default=1500,
         description="Number of credits to refill for each user",
     )
-    # Add more configuration fields as needed
+    refund_credit_tolerance_threshold: int = Field(
+        default=500,
+        description="Maximum number of credits above the balance to be auto-approved.",
+    )
 
     model_config = SettingsConfigDict(
         env_file=".env",

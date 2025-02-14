@@ -11,7 +11,9 @@ import { useBackendAPI } from "@/lib/autogpt-server-api/context";
 import useCredits from "@/hooks/useCredits";
 
 const CreditsCard = () => {
-  const { credits, formatCredits, fetchCredits } = useCredits();
+  const { credits, formatCredits, fetchCredits } = useCredits({
+    fetchInitialCredits: true,
+  });
   const api = useBackendAPI();
 
   const onRefresh = async () => {

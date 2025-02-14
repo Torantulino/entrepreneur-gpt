@@ -1,10 +1,13 @@
 "use client";
-import { useEffect, useCallback } from "react";
-import { Button } from "@/components/agptui/Button";
+import { useEffect, useState, useCallback } from "react";
+import { Button } from "@/components/ui/button";
 import useCredits from "@/hooks/useCredits";
 import { useBackendAPI } from "@/lib/autogpt-server-api/context";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
+
+import { RefundModal } from "./RefundModal";
+import { CreditTransaction } from "@/lib/autogpt-server-api";
 
 import {
   Table,
@@ -24,7 +27,15 @@ export default function CreditsPage() {
     transactionHistory,
     fetchTransactionHistory,
     formatCredits,
-  } = useCredits();
+    refundTopUp,
+    refundRequests,
+    fetchRefundRequests,
+  } = useCredits({
+    fetchInitialAutoTopUpConfig: true,
+    fetchInitialRefundRequests: true,
+    fetchInitialTransactionHistory: true,
+    fetchTopUpLibrary: true,
+  });
   const router = useRouter();
   const searchParams = useSearchParams();
   const topupStatus = searchParams.get("topup") as "success" | "cancel" | null;
@@ -32,7 +43,7 @@ export default function CreditsPage() {
 
   const toastOnFail = useCallback(
     (action: string, fn: () => Promise<any>) => {
-      fn().catch((e) => {
+      return fn().catch((e) => {
         toast({
           title: `Unable to ${action}`,
           description: e.message,
@@ -43,6 +54,33 @@ export default function CreditsPage() {
     },
     [toast],
   );
+
+  const [isRefundModalOpen, setIsRefundModalOpen] = useState(false);
+  const [topUpTransactions, setTopUpTransactions] = useState<
+    CreditTransaction[]
+  >([]);
+  const openRefundModal = () => {
+    api.getTransactionHistory(null, 20, "TOP_UP").then((history) => {
+      setTopUpTransactions(history.transactions);
+      setIsRefundModalOpen(true);
+    });
+  };
+  const refundCredits = async (transaction_key: string, reason: string) =>
+    toastOnFail("refund transaction", async () => {
+      const amount = await refundTopUp(transaction_key, reason);
+      if (amount > 0) {
+        toast({
+          title: "Refund approved! 🎉",
+          description: `Your refund has been automatically processed. Based on your remaining balance, the amount of ${formatCredits(amount)} will be credited to your account.`,
+        });
+      } else {
+        toast({
+          title: "Refund Request Received",
+          description:
+            "We have received your refund request. A member of our team will review it and reach out via email shortly.",
+        });
+      }
+    });
 
   useEffect(() => {
     if (api && topupStatus === "success") {
@@ -86,8 +124,8 @@ export default function CreditsPage() {
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         {/* Top-up Form */}
-        <div>
-          <h2 className="text-lg">Top-up Credits</h2>
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Top-up Credits</h3>
 
           <p className="mb-6 text-neutral-600 dark:text-neutral-400">
             {topupStatus === "success" && (
@@ -131,7 +169,7 @@ export default function CreditsPage() {
           </form>
 
           {/* Auto Top-up Form */}
-          <form onSubmit={submitAutoTopUpConfig} className="mt-6 space-y-4">
+          <form onSubmit={submitAutoTopUpConfig} className="my-6 space-y-4">
             <h3 className="text-lg font-medium">Automatic Refill Settings</h3>
 
             <div>
@@ -212,16 +250,14 @@ export default function CreditsPage() {
           </form>
         </div>
 
-        <div>
+        <div className="my-6 space-y-4">
           {/* Payment Portal */}
-          <h2 className="text-lg">Manage Your Payment Methods</h2>
-          <br />
+
+          <h3 className="text-lg font-medium">Manage Your Payment Methods</h3>
           <p className="text-neutral-600">
             You can manage your cards and see your payment history in the
             billing portal.
           </p>
-          <br />
-
           <Button
             type="submit"
             variant="default"
@@ -232,13 +268,11 @@ export default function CreditsPage() {
           </Button>
 
           {/* Transaction History */}
-          <h2 className="mt-6 text-lg">Transaction History</h2>
-          <br />
+          <h3 className="text-lg font-medium">Transaction History</h3>
           <p className="text-neutral-600">
             Running balance might not be ordered accurately when concurrent
             executions are happening.
           </p>
-          <br />
           {transactionHistory.transactions.length === 0 && (
             <p className="text-neutral-600">No transactions found.</p>
           )}
@@ -259,7 +293,16 @@ export default function CreditsPage() {
               {transactionHistory.transactions.map((transaction, i) => (
                 <TableRow key={i}>
                   <TableCell>
-                    {new Date(transaction.transaction_time).toLocaleString()}
+                    {new Date(transaction.transaction_time).toLocaleString(
+                      undefined,
+                      {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                        hour: "numeric",
+                        minute: "numeric",
+                      },
+                    )}
                   </TableCell>
                   <TableCell>{transaction.description}</TableCell>
                   {/* Make it green if it's positive, red if it's negative */}
@@ -284,6 +327,58 @@ export default function CreditsPage() {
               Load More
             </Button>
           )}
+
+          {refundRequests.length > 0 && (
+            <>
+              <h3 className="text-lg font-medium">Your Refund Requests</h3>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Last Updated</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Comment</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {refundRequests.map((request, i) => (
+                    <TableRow key={i}>
+                      <TableCell>
+                        {new Date(request.updated_at).toLocaleString(
+                          undefined,
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                            hour: "numeric",
+                            minute: "numeric",
+                          },
+                        )}
+                      </TableCell>
+                      <TableCell>{formatCredits(request.amount)}</TableCell>
+                      <TableCell>{request.status}</TableCell>
+                      <TableCell>{request.result}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </>
+          )}
+
+          <Button
+            variant="destructive"
+            onClick={() => openRefundModal()}
+            className="w-full"
+          >
+            Request Refund
+          </Button>
+          <RefundModal
+            isOpen={isRefundModalOpen}
+            onClose={() => setIsRefundModalOpen(false)}
+            transactions={topUpTransactions}
+            formatCredits={formatCredits}
+            refundCredits={refundCredits}
+          />
         </div>
       </div>
     </div>

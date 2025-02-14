@@ -30,5 +30,8 @@ class JSONCryptor:
         """Decrypt string to dictionary"""
         if not encrypted_str:
             return {}
-        decrypted = self.fernet.decrypt(encrypted_str.encode())
-        return json.loads(decrypted.decode())
+        try:
+            decrypted = self.fernet.decrypt(encrypted_str.encode())
+            return json.loads(decrypted.decode())
+        except Exception:
+            return {}

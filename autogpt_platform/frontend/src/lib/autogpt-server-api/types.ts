@@ -574,6 +574,7 @@ export interface CreateAPIKeyResponse {
 }
 
 export interface CreditTransaction {
+  transaction_key: string;
   transaction_time: Date;
   transaction_type: string;
   amount: number;
@@ -588,4 +589,16 @@ export interface CreditTransaction {
 export interface TransactionHistory {
   transactions: CreditTransaction[];
   next_transaction_time: Date | null;
+}
+
+export interface RefundRequest {
+  id: string;
+  user_id: string;
+  transaction_key: string;
+  amount: number;
+  reason: string;
+  result: string | null;
+  status: string;
+  created_at: Date;
+  updated_at: Date;
 }
