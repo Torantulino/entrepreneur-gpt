@@ -48,7 +48,7 @@ export const Navbar = async ({ links, menuItemGroups }: NavbarProps) => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 mx-[16px] hidden h-16 max-w-[1600px] items-center justify-between rounded-bl-2xl rounded-br-2xl border border-white/50 bg-white/5 py-3 pl-6 pr-3 backdrop-blur-[26px] dark:border-gray-700 dark:bg-gray-900 md:inline-flex">
+      <nav className="sticky top-0 z-50 mx-[16px] hidden h-16 w-full max-w-[1600px] items-center justify-between rounded-bl-2xl rounded-br-2xl border border-white/50 bg-neutral-50 py-3 pl-6 pr-3 backdrop-blur-[26px] dark:border-gray-700 dark:bg-gray-900 md:inline-flex">
         <div className="flex items-center gap-11">
           <div className="relative h-10 w-[88.87px]">
             <IconAutoGPTLogo className="h-full w-full" />

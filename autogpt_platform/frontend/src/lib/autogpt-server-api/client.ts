@@ -33,6 +33,13 @@ import {
   TransactionHistory,
   User,
   UserPasswordCredentials,
+  LibraryAgentResponse,
+  LibraryAgentPresetResponse,
+  CreateLibraryAgentPresetRequest,
+  LibraryAgent,
+  LibraryAgentPreset,
+  AgentStatus,
+  LibraryAgentSortEnum,
 } from "./types";
 import { createBrowserClient } from "@supabase/ssr";
 import getServerSupabase from "../supabase/getServerSupabase";
@@ -443,12 +450,71 @@ export default class BackendAPI {
   /////////// V2 LIBRARY API //////////////
   /////////////////////////////////////////
 
-  async listLibraryAgents(): Promise<GraphMeta[]> {
-    return this._get("/library/agents");
+  async listLibraryAgents(params?: {
+    search_term?: string;
+    sort_by?: LibraryAgentSortEnum;
+    page?: number;
+    page_size?: number;
+  }): Promise<LibraryAgentResponse> {
+    return this._get("/library/agents", params);
   }
 
   async addAgentToLibrary(storeListingVersionId: string): Promise<void> {
+    console.log("Adding to the library");
     await this._request("POST", `/library/agents/${storeListingVersionId}`);
+  }
+
+  async updateLibraryAgent(
+    libraryAgentId: string,
+    params: {
+      auto_update_version?: boolean;
+      is_favorite?: boolean;
+      is_archived?: boolean;
+      is_deleted?: boolean;
+    },
+  ): Promise<void> {
+    await this._request("PUT", `/library/agents/${libraryAgentId}`, params);
+  }
+
+  async listLibraryAgentPresets(params?: {
+    page?: number;
+    page_size?: number;
+  }): Promise<LibraryAgentPresetResponse> {
+    return this._get("/library/presets", params);
+  }
+
+  async getLibraryAgentPreset(presetId: string): Promise<LibraryAgentPreset> {
+    return this._get(`/library/presets/${presetId}`);
+  }
+
+  async createLibraryAgentPreset(
+    preset: CreateLibraryAgentPresetRequest,
+  ): Promise<LibraryAgentPreset> {
+    return this._request("POST", "/library/presets", preset);
+  }
+
+  async updateLibraryAgentPreset(
+    presetId: string,
+    preset: CreateLibraryAgentPresetRequest,
+  ): Promise<LibraryAgentPreset> {
+    return this._request("PUT", `/library/presets/${presetId}`, preset);
+  }
+
+  async deleteLibraryAgentPreset(presetId: string): Promise<void> {
+    await this._request("DELETE", `/library/presets/${presetId}`);
+  }
+
+  async executeLibraryAgentPreset(
+    presetId: string,
+    graphId: string,
+    graphVersion: number,
+    nodeInput: { [key: string]: any },
+  ): Promise<{ id: string }> {
+    return this._request("POST", `/library/presets/${presetId}/execute`, {
+      graph_id: graphId,
+      graph_version: graphVersion,
+      node_input: nodeInput,
+    });
   }
 
   ///////////////////////////////////////////

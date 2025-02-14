@@ -19,6 +19,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  transpilePackages: ["geist"],
 };
 
 export default withSentryConfig(nextConfig, {
