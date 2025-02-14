@@ -669,7 +669,8 @@ async def review_submission(
             reviewer_id=user.user_id,
         )
         return submission
-    except Exception:
+    except Exception as e:
+        logger.error(f"Could not create store submission review: {e}")
         raise fastapi.HTTPException(
             status_code=500,
             detail="An error occurred while creating the store submission review",

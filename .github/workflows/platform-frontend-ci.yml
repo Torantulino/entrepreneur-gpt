@@ -2,7 +2,7 @@ name: AutoGPT Platform - Frontend CI
 
 on:
   push:
-    branches: [master, dev]
+    branches: [master, dev, dev-*]
     paths:
       - ".github/workflows/platform-frontend-ci.yml"
       - "autogpt_platform/frontend/**"

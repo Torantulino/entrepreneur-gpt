@@ -3,53 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-  .font-neue {
-    font-family: "PP Neue Montreal TT", sans-serif;
-  }
-}
-
-@layer utilities {
-  .w-110 {
-    width: 27.5rem;
-  }
-  .h-7\.5 {
-    height: 1.1875rem;
-  }
-  .h-18 {
-    height: 4.5rem;
-  }
-  .h-238 {
-    height: 14.875rem;
-  }
-  .top-158 {
-    top: 9.875rem;
-  }
-  .top-254 {
-    top: 15.875rem;
-  }
-  .top-284 {
-    top: 17.75rem;
-  }
-  .top-360 {
-    top: 22.5rem;
-  }
-  .left-297 {
-    left: 18.5625rem;
-  }
-  .left-34 {
-    left: 2.125rem;
-  }
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
-
-@layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 250 5% 98%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -61,8 +16,8 @@
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 262 83% 58%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
@@ -102,9 +57,7 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
@@ -112,11 +65,82 @@
     @apply bg-background text-foreground;
   }
 
+  .font-neue {
+    font-family: "PP Neue Montreal TT", sans-serif;
+  }
+}
+
+/* *** AutoGPT Design Components *** */
+
+@layer components {
   .agpt-border-input {
     @apply border border-input focus-visible:border-gray-400 focus-visible:outline-none;
   }
 
   .agpt-shadow-input {
     @apply shadow-sm focus-visible:shadow-md;
+  }
+
+  .agpt-rounded-card {
+    @apply rounded-2xl;
+  }
+
+  .agpt-rounded-box {
+    @apply rounded-3xl;
+  }
+
+  .agpt-card {
+    @apply agpt-rounded-card border border-zinc-300 bg-white p-[1px];
+  }
+
+  .agpt-box {
+    @apply agpt-card agpt-rounded-box;
+  }
+
+  .agpt-div {
+    @apply border-zinc-200 p-5;
+  }
+}
+
+@layer utilities {
+  .agpt-card-selected {
+    @apply border-2 border-accent bg-violet-50/50 p-0;
+  }
+}
+
+@layer utilities {
+  /* TODO: 1. remove unused utility classes */
+  /* TODO: 2. fix naming of numbered dimensions so that the number is 4*dimension */
+  /* TODO: 3. move to tailwind.config.ts spacing config */
+  .h-7\.5 {
+    height: 1.1875rem;
+  }
+  .h-18 {
+    height: 4.5rem;
+  }
+  .h-238 {
+    height: 14.875rem;
+  }
+  .top-158 {
+    top: 9.875rem;
+  }
+  .top-254 {
+    top: 15.875rem;
+  }
+  .top-284 {
+    top: 17.75rem;
+  }
+  .top-360 {
+    top: 22.5rem;
+  }
+  .left-297 {
+    left: 18.5625rem;
+  }
+  .left-34 {
+    left: 2.125rem;
+  }
+
+  .text-balance {
+    text-wrap: balance;
   }
 }

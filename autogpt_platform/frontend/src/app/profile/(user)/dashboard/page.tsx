@@ -84,7 +84,6 @@ export default function Page({}: {}) {
         <PublishAgentPopout
           trigger={
             <Button
-              variant="default"
               size="sm"
               onClick={onOpenPopout}
               className="h-9 rounded-full bg-black px-4 text-sm font-medium text-white hover:bg-neutral-700 dark:hover:bg-neutral-600"

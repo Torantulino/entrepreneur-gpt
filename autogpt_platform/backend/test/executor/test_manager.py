@@ -58,7 +58,7 @@ async def assert_sample_graph_executions(
     graph_exec_id: str,
 ):
     logger.info(f"Checking execution results for graph {test_graph.id}")
-    executions = await agent_server.test_get_graph_run_node_execution_results(
+    graph_run = await agent_server.test_get_graph_run_results(
         test_graph.id,
         graph_exec_id,
         test_user.id,
@@ -77,7 +77,7 @@ async def assert_sample_graph_executions(
     ]
 
     # Executing StoreValueBlock
-    exec = executions[0]
+    exec = graph_run.node_executions[0]
     logger.info(f"Checking first StoreValueBlock execution: {exec}")
     assert exec.status == execution.ExecutionStatus.COMPLETED
     assert exec.graph_exec_id == graph_exec_id
@@ -90,7 +90,7 @@ async def assert_sample_graph_executions(
     assert exec.node_id in [test_graph.nodes[0].id, test_graph.nodes[1].id]
 
     # Executing StoreValueBlock
-    exec = executions[1]
+    exec = graph_run.node_executions[1]
     logger.info(f"Checking second StoreValueBlock execution: {exec}")
     assert exec.status == execution.ExecutionStatus.COMPLETED
     assert exec.graph_exec_id == graph_exec_id
@@ -103,7 +103,7 @@ async def assert_sample_graph_executions(
     assert exec.node_id in [test_graph.nodes[0].id, test_graph.nodes[1].id]
 
     # Executing FillTextTemplateBlock
-    exec = executions[2]
+    exec = graph_run.node_executions[2]
     logger.info(f"Checking FillTextTemplateBlock execution: {exec}")
     assert exec.status == execution.ExecutionStatus.COMPLETED
     assert exec.graph_exec_id == graph_exec_id
@@ -118,7 +118,7 @@ async def assert_sample_graph_executions(
     assert exec.node_id == test_graph.nodes[2].id
 
     # Executing PrintToConsoleBlock
-    exec = executions[3]
+    exec = graph_run.node_executions[3]
     logger.info(f"Checking PrintToConsoleBlock execution: {exec}")
     assert exec.status == execution.ExecutionStatus.COMPLETED
     assert exec.graph_exec_id == graph_exec_id
@@ -201,14 +201,14 @@ async def test_input_pin_always_waited(server: SpinTestServer):
     )
 
     logger.info("Checking execution results")
-    executions = await server.agent_server.test_get_graph_run_node_execution_results(
+    graph_exec = await server.agent_server.test_get_graph_run_results(
         test_graph.id, graph_exec_id, test_user.id
     )
-    assert len(executions) == 3
+    assert len(graph_exec.node_executions) == 3
     # FindInDictionaryBlock should wait for the input pin to be provided,
     # Hence executing extraction of "key" from {"key1": "value1", "key2": "value2"}
-    assert executions[2].status == execution.ExecutionStatus.COMPLETED
-    assert executions[2].output_data == {"output": ["value2"]}
+    assert graph_exec.node_executions[2].status == execution.ExecutionStatus.COMPLETED
+    assert graph_exec.node_executions[2].output_data == {"output": ["value2"]}
     logger.info("Completed test_input_pin_always_waited")
 
 
@@ -284,12 +284,12 @@ async def test_static_input_link_on_graph(server: SpinTestServer):
         server.agent_server, test_graph, test_user, {}, 8
     )
     logger.info("Checking execution results")
-    executions = await server.agent_server.test_get_graph_run_node_execution_results(
+    graph_exec = await server.agent_server.test_get_graph_run_results(
         test_graph.id, graph_exec_id, test_user.id
     )
-    assert len(executions) == 8
+    assert len(graph_exec.node_executions) == 8
     # The last 3 executions will be a+b=4+5=9
-    for i, exec_data in enumerate(executions[-3:]):
+    for i, exec_data in enumerate(graph_exec.node_executions[-3:]):
         logger.info(f"Checking execution {i+1} of last 3: {exec_data}")
         assert exec_data.status == execution.ExecutionStatus.COMPLETED
         assert exec_data.output_data == {"result": [9]}

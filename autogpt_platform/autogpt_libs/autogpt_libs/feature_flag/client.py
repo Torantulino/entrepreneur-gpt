@@ -13,7 +13,6 @@ from typing_extensions import ParamSpec
 from .config import SETTINGS
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
 
 P = ParamSpec("P")
 T = TypeVar("T")

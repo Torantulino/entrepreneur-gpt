@@ -92,7 +92,6 @@ export const AgentImageItem: React.FC<AgentImageItemProps> = React.memo(
         {isVideoFile && playingVideoIndex !== index && (
           <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 md:bottom-4 md:left-4 lg:bottom-[1.25rem] lg:left-[1.25rem]">
             <Button
-              variant="default"
               size="default"
               onClick={() => {
                 if (videoRef.current) {

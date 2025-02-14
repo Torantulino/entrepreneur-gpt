@@ -53,7 +53,7 @@ export const NavbarLink = ({ name, href }: NavbarLinkProps) => {
           />
         )}
         <div
-          className={`font-poppins text-[20px] font-medium leading-[28px] ${
+          className={`hidden font-poppins text-[20px] font-medium leading-[28px] lg:block ${
             activeLink === href
               ? "text-neutral-50 dark:text-neutral-900"
               : "text-neutral-900 dark:text-neutral-50"

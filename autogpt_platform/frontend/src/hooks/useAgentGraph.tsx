@@ -607,8 +607,11 @@ export default function useAgentGraph(
     }
 
     const fetchExecutions = async () => {
-      const results = await api.getGraphExecutionInfo(flowID, flowExecutionID);
-      setUpdateQueue((prev) => [...prev, ...results]);
+      const execution = await api.getGraphExecutionInfo(
+        flowID,
+        flowExecutionID,
+      );
+      setUpdateQueue((prev) => [...prev, ...execution.node_executions]);
 
       // Track execution until completed
       const pendingNodeExecutions: Set<string> = new Set();

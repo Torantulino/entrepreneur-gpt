@@ -1,5 +1,5 @@
 import BackendAPI, {
-  GraphExecution,
+  GraphExecutionMeta,
   GraphMeta,
 } from "@/lib/autogpt-server-api";
 import React, { useMemo } from "react";
@@ -40,7 +40,7 @@ export const AgentFlowList = ({
   className,
 }: {
   flows: GraphMeta[];
-  executions?: GraphExecution[];
+  executions?: GraphExecutionMeta[];
   selectedFlow: GraphMeta | null;
   onSelectFlow: (f: GraphMeta) => void;
   className?: string;
@@ -109,7 +109,7 @@ export const AgentFlowList = ({
             {flows
               .map((flow) => {
                 let runCount = 0,
-                  lastRun: GraphExecution | null = null;
+                  lastRun: GraphExecutionMeta | null = null;
                 if (executions) {
                   const _flowRuns = executions.filter(
                     (r) => r.graph_id == flow.id,

@@ -11,7 +11,7 @@ const badgeVariants = cva(
         default:
           "border-transparent bg-neutral-900 text-neutral-50 shadow dark:bg-neutral-50 dark:text-neutral-900",
         secondary:
-          "border-transparent bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50",
+          "border-transparent bg-neutral-200 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50",
         destructive:
           "border-transparent bg-red-500 text-neutral-50 shadow dark:bg-red-900 dark:text-neutral-50",
         outline: "text-neutral-950 dark:text-neutral-50",

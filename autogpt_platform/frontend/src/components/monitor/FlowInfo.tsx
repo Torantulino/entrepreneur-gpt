@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
-  GraphExecution,
+  GraphExecutionMeta,
   Graph,
   GraphMeta,
   safeCopyGraph,
@@ -32,7 +32,6 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
-import { CronScheduler } from "@/components/cronScheduler";
 import RunnerInputUI from "@/components/runner-ui/RunnerInputUI";
 import useAgentGraph from "@/hooks/useAgentGraph";
 import { useBackendAPI } from "@/lib/autogpt-server-api/context";
@@ -40,7 +39,7 @@ import { useBackendAPI } from "@/lib/autogpt-server-api/context";
 export const FlowInfo: React.FC<
   React.HTMLAttributes<HTMLDivElement> & {
     flow: GraphMeta;
-    executions: GraphExecution[];
+    executions: GraphExecutionMeta[];
     flowVersion?: number | "all";
     refresh: () => void;
   }

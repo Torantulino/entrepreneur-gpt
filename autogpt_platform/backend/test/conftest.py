@@ -2,22 +2,22 @@ import logging
 
 import pytest
 
-from backend.util.test import SpinTestServer
+from backend.util.logging import configure_logging
 
 #  NOTE: You can run tests like with the --log-cli-level=INFO to see the logs
 # Set up logging
+configure_logging()
 logger = logging.getLogger(__name__)
 
-# Create console handler with formatting
-ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-ch.setFormatter(formatter)
-logger.addHandler(ch)
+# Reduce Prisma log spam
+prisma_logger = logging.getLogger("prisma")
+prisma_logger.setLevel(logging.INFO)
 
 
 @pytest.fixture(scope="session")
 async def server():
+    from backend.util.test import SpinTestServer
+
     async with SpinTestServer() as server:
         yield server
 

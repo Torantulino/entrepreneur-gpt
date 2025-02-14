@@ -65,14 +65,11 @@ export const Interactive: Story = {
 export const Variants: Story = {
   render: (args) => (
     <div className="flex flex-wrap gap-2">
-      <Button {...args} variant="default">
-        Default
+      <Button {...args} variant="outline">
+        Outline (default)
       </Button>
       <Button {...args} variant="destructive">
         Destructive
-      </Button>
-      <Button {...args} variant="outline">
-        Outline
       </Button>
       <Button {...args} variant="secondary">
         Secondary

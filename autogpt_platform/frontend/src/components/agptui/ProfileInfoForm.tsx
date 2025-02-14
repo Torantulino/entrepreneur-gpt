@@ -256,7 +256,6 @@ export const ProfileInfoForm = ({ profile }: { profile: CreatorDetails }) => {
             </Button>
             <Button
               type="submit"
-              variant="default"
               disabled={isSubmitting}
               className="font-circular h-[50px] rounded-[35px] bg-neutral-800 px-6 py-3 text-base font-medium text-white transition-colors hover:bg-neutral-900 dark:bg-neutral-200 dark:text-neutral-900 dark:hover:bg-neutral-100"
               onClick={submitForm}

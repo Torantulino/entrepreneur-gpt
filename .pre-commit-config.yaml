@@ -171,6 +171,16 @@ repos:
         args: [--config=classic/benchmark/.flake8]
 
   - repo: local
+    hooks:
+      - id: prettier
+        name: Format (Prettier) - AutoGPT Platform - Frontend
+        alias: format-platform-frontend
+        entry: bash -c 'cd autogpt_platform/frontend && npx prettier --write $(echo "$@" | sed "s|autogpt_platform/frontend/||g")' --
+        files: ^autogpt_platform/frontend/
+        types: [file]
+        language: system
+
+  - repo: local
     # To have watertight type checking, we check *all* the files in an affected
     # project. To trigger on poetry.lock we also reset the file `types` filter.
     hooks:
@@ -217,6 +227,16 @@ repos:
         alias: pyright-classic-benchmark
         entry: poetry -C classic/benchmark run pyright
         files: ^classic/benchmark/(agbenchmark/|tests/|poetry\.lock$)
+        types: [file]
+        language: system
+        pass_filenames: false
+
+  - repo: local
+    hooks:
+      - id: tsc
+        name: Typecheck - AutoGPT Platform - Frontend
+        entry: bash -c 'cd autogpt_platform/frontend && npm run type-check'
+        files: ^autogpt_platform/frontend/
         types: [file]
         language: system
         pass_filenames: false

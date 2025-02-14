@@ -1,5 +1,5 @@
 import React from "react";
-import { GraphExecution, GraphMeta } from "@/lib/autogpt-server-api";
+import { GraphExecutionMeta, GraphMeta } from "@/lib/autogpt-server-api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -15,10 +15,10 @@ import { TextRenderer } from "../ui/render";
 
 export const FlowRunsList: React.FC<{
   flows: GraphMeta[];
-  executions: GraphExecution[];
+  executions: GraphExecutionMeta[];
   className?: string;
-  selectedRun?: GraphExecution | null;
-  onSelectRun: (r: GraphExecution) => void;
+  selectedRun?: GraphExecutionMeta | null;
+  onSelectRun: (r: GraphExecutionMeta) => void;
 }> = ({ flows, executions, selectedRun, onSelectRun, className }) => (
   <Card className={className}>
     <CardHeader>

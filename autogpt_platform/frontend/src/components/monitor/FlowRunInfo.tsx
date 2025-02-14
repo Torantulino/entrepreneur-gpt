@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  GraphExecution,
+  GraphExecutionMeta,
   GraphMeta,
   NodeExecutionResult,
   SpecialBlockID,
@@ -18,7 +18,7 @@ import { useBackendAPI } from "@/lib/autogpt-server-api/context";
 export const FlowRunInfo: React.FC<
   React.HTMLAttributes<HTMLDivElement> & {
     flow: GraphMeta;
-    execution: GraphExecution;
+    execution: GraphExecutionMeta;
   }
 > = ({ flow, execution, ...props }) => {
   const [isOutputOpen, setIsOutputOpen] = useState(false);
@@ -26,10 +26,9 @@ export const FlowRunInfo: React.FC<
   const api = useBackendAPI();
 
   const fetchBlockResults = useCallback(async () => {
-    const executionResults = await api.getGraphExecutionInfo(
-      flow.id,
-      execution.execution_id,
-    );
+    const executionResults = (
+      await api.getGraphExecutionInfo(flow.id, execution.execution_id)
+    ).node_executions;
 
     // Create a map of the latest COMPLETED execution results of output nodes by node_id
     const latestCompletedResults = executionResults

@@ -41,6 +41,8 @@ export type BlockIOSubSchema =
   | BlockIOSimpleTypeSubSchema
   | BlockIOCombinedTypeSubSchema;
 
+export type BlockIOSubType = BlockIOSimpleTypeSubSchema["type"];
+
 export type BlockIOSimpleTypeSubSchema =
   | BlockIOObjectSubSchema
   | BlockIOCredentialsSubSchema
@@ -149,8 +151,7 @@ export const PROVIDER_NAMES = {
 export type CredentialsProviderName =
   (typeof PROVIDER_NAMES)[keyof typeof PROVIDER_NAMES];
 
-export type BlockIOCredentialsSubSchema = BlockIOSubSchemaMeta & {
-  type: "object";
+export type BlockIOCredentialsSubSchema = BlockIOObjectSubSchema & {
   /* Mirror of backend/data/model.py:CredentialsFieldSchemaExtra */
   credentials_provider: CredentialsProviderName[];
   credentials_scopes?: string[];
@@ -216,8 +217,8 @@ export type LinkCreatable = Omit<Link, "id" | "is_static"> & {
   id?: string;
 };
 
-/* Mirror of backend/data/graph.py:GraphExecution */
-export type GraphExecution = {
+/* Mirror of backend/data/graph.py:GraphExecutionMeta */
+export type GraphExecutionMeta = {
   execution_id: string;
   started_at: number;
   ended_at: number;
@@ -226,6 +227,14 @@ export type GraphExecution = {
   status: "QUEUED" | "RUNNING" | "COMPLETED" | "TERMINATED" | "FAILED";
   graph_id: string;
   graph_version: number;
+  preset_id?: string;
+};
+
+/* Mirror of backend/data/graph.py:GraphExecution */
+export type GraphExecution = GraphExecutionMeta & {
+  inputs: Record<string, any>;
+  outputs: Record<string, any>;
+  node_executions: NodeExecutionResult[];
 };
 
 export type GraphMeta = {

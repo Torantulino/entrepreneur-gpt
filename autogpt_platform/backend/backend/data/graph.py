@@ -23,11 +23,14 @@ from backend.util import type
 
 from .block import BlockInput, BlockType, get_block, get_blocks
 from .db import BaseDbModel, transaction
-from .execution import ExecutionStatus
+from .execution import ExecutionResult, ExecutionStatus
 from .includes import AGENT_GRAPH_INCLUDE, AGENT_NODE_INCLUDE
 from .integrations import Webhook
 
 logger = logging.getLogger(__name__)
+
+_INPUT_BLOCK_ID = AgentInputBlock().id
+_OUTPUT_BLOCK_ID = AgentOutputBlock().id
 
 
 class Link(BaseDbModel):
@@ -105,7 +108,7 @@ class NodeModel(Node):
 Webhook.model_rebuild()
 
 
-class GraphExecution(BaseDbModel):
+class GraphExecutionMeta(BaseDbModel):
     execution_id: str
     started_at: datetime
     ended_at: datetime
@@ -114,33 +117,71 @@ class GraphExecution(BaseDbModel):
     status: ExecutionStatus
     graph_id: str
     graph_version: int
+    preset_id: Optional[str]
 
     @staticmethod
-    def from_db(execution: AgentGraphExecution):
+    def from_db(_graph_exec: AgentGraphExecution):
         now = datetime.now(timezone.utc)
-        start_time = execution.startedAt or execution.createdAt
-        end_time = execution.updatedAt or now
+        start_time = _graph_exec.startedAt or _graph_exec.createdAt
+        end_time = _graph_exec.updatedAt or now
         duration = (end_time - start_time).total_seconds()
         total_run_time = duration
 
         try:
-            stats = type.convert(execution.stats or {}, dict[str, Any])
+            stats = type.convert(_graph_exec.stats or {}, dict[str, Any])
         except ValueError:
             stats = {}
 
         duration = stats.get("walltime", duration)
         total_run_time = stats.get("nodes_walltime", total_run_time)
 
-        return GraphExecution(
-            id=execution.id,
-            execution_id=execution.id,
+        return GraphExecutionMeta(
+            id=_graph_exec.id,
+            execution_id=_graph_exec.id,
             started_at=start_time,
             ended_at=end_time,
             duration=duration,
             total_run_time=total_run_time,
-            status=ExecutionStatus(execution.executionStatus),
-            graph_id=execution.agentGraphId,
-            graph_version=execution.agentGraphVersion,
+            status=ExecutionStatus(_graph_exec.executionStatus),
+            graph_id=_graph_exec.agentGraphId,
+            graph_version=_graph_exec.agentGraphVersion,
+            preset_id=_graph_exec.agentPresetId,
+        )
+
+
+class GraphExecution(GraphExecutionMeta):
+    inputs: dict[str, Any]
+    outputs: dict[str, Any]
+    node_executions: list[ExecutionResult]
+
+    @staticmethod
+    def from_db(_graph_exec: AgentGraphExecution):
+        if _graph_exec.AgentNodeExecutions is None:
+            raise ValueError("Node executions must be included in query")
+
+        graph_exec = GraphExecutionMeta.from_db(_graph_exec)
+
+        node_executions = [
+            ExecutionResult.from_db(ne) for ne in _graph_exec.AgentNodeExecutions
+        ]
+        inputs = {
+            exec.input_data["name"]: exec.input_data["value"]
+            for exec in node_executions
+            if exec.block_id == _INPUT_BLOCK_ID
+        }
+        outputs = {
+            exec.input_data["name"]: exec.input_data["value"]
+            for exec in node_executions
+            if exec.block_id == _OUTPUT_BLOCK_ID
+        }
+        return GraphExecution(
+            **{
+                field_name: getattr(graph_exec, field_name)
+                for field_name in graph_exec.model_fields
+            },
+            inputs=inputs,
+            outputs=outputs,
+            node_executions=node_executions,
         )
 
 
@@ -514,17 +555,45 @@ async def get_graphs(
     return graph_models
 
 
-async def get_executions(user_id: str) -> list[GraphExecution]:
+async def get_graphs_executions(user_id: str) -> list[GraphExecutionMeta]:
     executions = await AgentGraphExecution.prisma().find_many(
         where={"userId": user_id},
         order={"createdAt": "desc"},
     )
-    return [GraphExecution.from_db(execution) for execution in executions]
+    return [GraphExecutionMeta.from_db(execution) for execution in executions]
+
+
+async def get_graph_executions(graph_id: str, user_id: str) -> list[GraphExecutionMeta]:
+    executions = await AgentGraphExecution.prisma().find_many(
+        where={"agentGraphId": graph_id, "userId": user_id},
+        order={"createdAt": "desc"},
+    )
+    return [GraphExecutionMeta.from_db(execution) for execution in executions]
+
+
+async def get_execution_meta(
+    user_id: str, execution_id: str
+) -> GraphExecutionMeta | None:
+    execution = await AgentGraphExecution.prisma().find_first(
+        where={"id": execution_id, "userId": user_id}
+    )
+    return GraphExecutionMeta.from_db(execution) if execution else None
 
 
 async def get_execution(user_id: str, execution_id: str) -> GraphExecution | None:
     execution = await AgentGraphExecution.prisma().find_first(
-        where={"id": execution_id, "userId": user_id}
+        where={"id": execution_id, "userId": user_id},
+        include={
+            "AgentNodeExecutions": {
+                "include": {"AgentNode": True, "Input": True, "Output": True},
+                "order_by": [
+                    {"queuedTime": "asc"},
+                    {  # Fallback: Incomplete execs has no queuedTime.
+                        "addedTime": "asc"
+                    },
+                ],
+            },
+        },
     )
     return GraphExecution.from_db(execution) if execution else None
 
@@ -629,7 +698,7 @@ async def create_graph(graph: Graph, user_id: str) -> GraphModel:
         await __create_graph(tx, graph, user_id)
 
     if created_graph := await get_graph(
-        graph.id, graph.version, graph.is_template, user_id=user_id
+        graph.id, graph.version, template=graph.is_template, user_id=user_id
     ):
         return created_graph
 

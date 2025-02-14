@@ -100,14 +100,12 @@ export const PublishAgentAwaitingReview: React.FC<
       <div className="flex w-full flex-col items-center justify-center gap-4 border-t border-slate-200 p-6 dark:border-slate-700 sm:flex-row">
         <Button
           onClick={onDone}
-          variant="outline"
           className="h-12 w-full rounded-[59px] sm:flex-1"
         >
           Done
         </Button>
         <Button
           onClick={onViewProgress}
-          variant="default"
           className="h-12 w-full rounded-[59px] bg-neutral-800 text-white hover:bg-neutral-900 dark:bg-neutral-700 dark:text-neutral-100 dark:hover:bg-neutral-600 sm:flex-1"
         >
           View progress
