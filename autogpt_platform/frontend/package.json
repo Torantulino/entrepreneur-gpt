@@ -65,7 +65,7 @@
     "launchdarkly-react-client-sdk": "^3.6.1",
     "lucide-react": "^0.474.0",
     "moment": "^2.30.1",
-    "next": "^14.2.21",
+    "next": "^15.1.6",
     "next-themes": "^0.4.4",
     "react": "^18",
     "react-day-picker": "^9.5.1",
