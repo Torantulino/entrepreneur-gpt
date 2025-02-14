@@ -346,6 +346,30 @@ export type UserPasswordCredentials = BaseCredentials & {
   password: string;
 };
 
+// Mirror of backend/backend/data/notifications.py:NotificationType
+export type NotificationType =
+  | "AGENT_RUN"
+  | "ZERO_BALANCE"
+  | "LOW_BALANCE"
+  | "BLOCK_EXECUTION_FAILED"
+  | "CONTINUOUS_AGENT_ERROR"
+  | "DAILY_SUMMARY"
+  | "WEEKLY_SUMMARY"
+  | "MONTHLY_SUMMARY";
+
+// Mirror of backend/backend/data/notifications.py:NotificationPreference
+export type NotificationPreferenceDTO = {
+  email: string;
+  preferences: { [key in NotificationType]: boolean };
+  daily_limit: number;
+};
+
+export type NotificationPreference = NotificationPreferenceDTO & {
+  user_id: string;
+  emails_sent_today: number;
+  last_reset_date: Date;
+};
+
 /* Mirror of backend/data/integrations.py:Webhook */
 export type Webhook = {
   id: string;

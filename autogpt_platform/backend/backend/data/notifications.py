@@ -217,6 +217,14 @@ class NotificationTypeOverride:
         }[self.notification_type]
 
 
+class NotificationPreferenceDTO(BaseModel):
+    email: EmailStr = Field(..., description="User's email address")
+    preferences: dict[NotificationType, bool] = Field(
+        ..., description="Which notifications the user wants"
+    )
+    daily_limit: int = Field(..., description="Max emails per day")
+
+
 class NotificationPreference(BaseModel):
     user_id: str
     email: EmailStr

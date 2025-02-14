@@ -40,7 +40,13 @@ from backend.data.credit import (
     get_user_credit_model,
     set_auto_top_up,
 )
-from backend.data.user import get_or_create_user
+from backend.data.notifications import NotificationPreference, NotificationPreferenceDTO
+from backend.data.user import (
+    get_or_create_user,
+    get_user_notification_preference,
+    update_user_email,
+    update_user_notification_preference,
+)
 from backend.executor import ExecutionManager, ExecutionScheduler, scheduler
 from backend.integrations.creds_manager import IntegrationCredentialsManager
 from backend.integrations.webhooks.graph_lifecycle_hooks import (
@@ -106,6 +112,42 @@ v1_router.include_router(
 async def get_or_create_user_route(user_data: dict = Depends(auth_middleware)):
     user = await get_or_create_user(user_data)
     return user.model_dump()
+
+
+@v1_router.post(
+    "/auth/user/email", tags=["auth"], dependencies=[Depends(auth_middleware)]
+)
+async def update_user_email_route(
+    user_id: Annotated[str, Depends(get_user_id)], email: str = Body(...)
+) -> dict[str, str]:
+    await update_user_email(user_id, email)
+
+    return {"email": email}
+
+
+@v1_router.get(
+    "/auth/user/preferences",
+    tags=["auth"],
+    dependencies=[Depends(auth_middleware)],
+)
+async def get_preferences(
+    user_id: Annotated[str, Depends(get_user_id)],
+) -> NotificationPreference:
+    preferences = await get_user_notification_preference(user_id)
+    return preferences
+
+
+@v1_router.post(
+    "/auth/user/preferences",
+    tags=["auth"],
+    dependencies=[Depends(auth_middleware)],
+)
+async def update_preferences(
+    user_id: Annotated[str, Depends(get_user_id)],
+    preferences: NotificationPreferenceDTO = Body(...),
+) -> NotificationPreference:
+    output = await update_user_notification_preference(user_id, preferences)
+    return output
 
 
 ########################################################
