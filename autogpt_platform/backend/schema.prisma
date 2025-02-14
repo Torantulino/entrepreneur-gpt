@@ -41,8 +41,8 @@ model User {
   AnalyticsMetrics     AnalyticsMetrics[]
   CreditTransaction    CreditTransaction[]
 
-  AgentPreset AgentPreset[]
-  UserAgent   UserAgent[]
+  AgentPreset  AgentPreset[]
+  LibraryAgent LibraryAgent[]
 
   Profile                Profile[]
   StoreListing           StoreListing[]
@@ -78,7 +78,7 @@ model AgentGraph {
   AgentGraphExecution AgentGraphExecution[]
 
   AgentPreset         AgentPreset[]
-  UserAgent           UserAgent[]
+  LibraryAgent        LibraryAgent[]
   StoreListing        StoreListing[]
   StoreListingVersion StoreListingVersion?
 
@@ -116,8 +116,10 @@ model AgentPreset {
   Agent        AgentGraph @relation(fields: [agentId, agentVersion], references: [id, version], onDelete: Cascade)
 
   InputPresets   AgentNodeExecutionInputOutput[] @relation("AgentPresetsInputData")
-  UserAgents     UserAgent[]
+  LibraryAgents  LibraryAgent[]
   AgentExecution AgentGraphExecution[]
+
+  isDeleted Boolean @default(false)
 
   @@index([userId])
 }
@@ -163,7 +165,7 @@ model UserNotificationBatch {
 
 // For the library page
 // It is a user controlled list of agents, that they will see in there library
-model UserAgent {
+model LibraryAgent {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -177,6 +179,8 @@ model UserAgent {
 
   agentPresetId String?
   AgentPreset   AgentPreset? @relation(fields: [agentPresetId], references: [id])
+
+  useGraphIsActiveVersion Boolean @default(false)
 
   isFavorite      Boolean @default(false)
   isCreatedByUser Boolean @default(false)

@@ -4,6 +4,7 @@ import pathlib
 from postmarker.core import PostmarkClient
 from postmarker.models.emails import EmailManager
 from prisma.enums import NotificationType
+from pydantic import BaseModel
 
 from backend.data.notifications import (
     NotificationEventModel,
@@ -24,6 +25,12 @@ class TypedPostmarkClient(PostmarkClient):
     emails: EmailManager
 
 
+class Template(BaseModel):
+    subject: str
+    body: str
+    base_template: str
+
+
 class EmailSender:
     def __init__(self):
         if settings.secrets.postmark_server_api_token:
@@ -42,33 +49,48 @@ class EmailSender:
         user_email: str,
         data: NotificationEventModel[T_co] | list[NotificationEventModel[T_co]],
     ):
+        """Send an email to a user using a template pulled from the notification type"""
         if not self.postmark:
             logger.warning("Postmark client not initialized, email not sent")
             return
-        body = self._get_template(notification)
-        # use the jinja2 library to render the template
-        body = self.formatter.format_string(body, data)
-        logger.info(
-            f"Sending email to {user_email} with subject {"subject"} and body {body}"
-        )
-        self._send_email(user_email, "subject", body)
+        template = self._get_template(notification)
+
+        try:
+            subject, full_message = self.formatter.format_email(
+                base_template=template.base_template,
+                subject_template=template.subject,
+                content_template=template.body,
+                data=data,
+                unsubscribe_link="https://autogpt.com/unsubscribe",
+            )
+
+        except Exception as e:
+            logger.error(f"Error formatting full message: {e}")
+            raise e
+
+        self._send_email(user_email, subject, full_message)
 
     def _get_template(self, notification: NotificationType):
         # convert the notification type to a notification type override
         notification_type_override = NotificationTypeOverride(notification)
         # find the template in templates/name.html (the .template returns with the .html)
         template_path = f"templates/{notification_type_override.template}.jinja2"
-        logger.info(
+        logger.debug(
             f"Template full path: {pathlib.Path(__file__).parent / template_path}"
         )
+        base_template_path = "templates/base.html.jinja2"
+        with open(pathlib.Path(__file__).parent / base_template_path, "r") as file:
+            base_template = file.read()
         with open(pathlib.Path(__file__).parent / template_path, "r") as file:
             template = file.read()
-        return template
+        return Template(
+            subject=notification_type_override.subject,
+            body=template,
+            base_template=base_template,
+        )
 
     def _send_email(self, user_email: str, subject: str, body: str):
-        logger.info(
-            f"Sending email to {user_email} with subject {subject} and body {body}"
-        )
+        logger.debug(f"Sending email to {user_email} with subject {subject}")
         self.postmark.emails.send(
             From=settings.config.postmark_sender_email,
             To=user_email,

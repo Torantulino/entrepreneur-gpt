@@ -15,6 +15,7 @@ from typing_extensions import Optional, TypedDict
 import backend.data.block
 import backend.server.integrations.router
 import backend.server.routers.analytics
+import backend.server.v2.library.db as library_db
 from backend.data import execution as execution_db
 from backend.data import graph as graph_db
 from backend.data.api_key import (
@@ -351,11 +352,6 @@ async def get_graph(
     tags=["graphs"],
     dependencies=[Depends(auth_middleware)],
 )
-@v1_router.get(
-    path="/templates/{graph_id}/versions",
-    tags=["templates", "graphs"],
-    dependencies=[Depends(auth_middleware)],
-)
 async def get_graph_all_versions(
     graph_id: str, user_id: Annotated[str, Depends(get_user_id)]
 ) -> Sequence[graph_db.GraphModel]:
@@ -371,41 +367,18 @@ async def get_graph_all_versions(
 async def create_new_graph(
     create_graph: CreateGraph, user_id: Annotated[str, Depends(get_user_id)]
 ) -> graph_db.GraphModel:
-    return await do_create_graph(create_graph, is_template=False, user_id=user_id)
-
-
-async def do_create_graph(
-    create_graph: CreateGraph,
-    is_template: bool,
-    # user_id doesn't have to be annotated like on other endpoints,
-    # because create_graph isn't used directly as an endpoint
-    user_id: str,
-) -> graph_db.GraphModel:
-    if create_graph.graph:
-        graph = graph_db.make_graph_model(create_graph.graph, user_id)
-    elif create_graph.template_id:
-        # Create a new graph from a template
-        graph = await graph_db.get_graph(
-            create_graph.template_id,
-            create_graph.template_version,
-            template=True,
-            user_id=user_id,
-        )
-        if not graph:
-            raise HTTPException(
-                400, detail=f"Template #{create_graph.template_id} not found"
-            )
-        graph.version = 1
-    else:
-        raise HTTPException(
-            status_code=400, detail="Either graph or template_id must be provided."
-        )
-
-    graph.is_template = is_template
-    graph.is_active = not is_template
+    graph = graph_db.make_graph_model(create_graph.graph, user_id)
     graph.reassign_ids(user_id=user_id, reassign_graph_id=True)
 
     graph = await graph_db.create_graph(graph, user_id=user_id)
+
+    # Create a library agent for the new graph
+    await library_db.create_library_agent(
+        graph.id,
+        graph.version,
+        user_id,
+    )
+
     graph = await on_graph_activate(
         graph,
         get_credentials=lambda id: integration_creds_manager.get(user_id, id),
@@ -431,11 +404,6 @@ async def delete_graph(
 
 @v1_router.put(
     path="/graphs/{graph_id}", tags=["graphs"], dependencies=[Depends(auth_middleware)]
-)
-@v1_router.put(
-    path="/templates/{graph_id}",
-    tags=["templates", "graphs"],
-    dependencies=[Depends(auth_middleware)],
 )
 async def update_graph(
     graph_id: str,
@@ -468,6 +436,10 @@ async def update_graph(
     new_graph_version = await graph_db.create_graph(graph, user_id=user_id)
 
     if new_graph_version.is_active:
+        # Keep the library agent up to date with the new active version
+        await library_db.update_agent_version_in_library(
+            user_id, graph.id, graph.version
+        )
 
         def get_credentials(credentials_id: str) -> "Credentials | None":
             return integration_creds_manager.get(user_id, credentials_id)
@@ -524,6 +496,12 @@ async def set_graph_active_version(
         version=new_active_version,
         user_id=user_id,
     )
+
+    # Keep the library agent up to date with the new active version
+    await library_db.update_agent_version_in_library(
+        user_id, new_active_graph.id, new_active_graph.version
+    )
+
     if current_active_graph and current_active_graph.version != new_active_version:
         # Handle deactivation of the previously active version
         await on_graph_deactivate(
@@ -539,7 +517,7 @@ async def set_graph_active_version(
 )
 def execute_graph(
     graph_id: str,
-    node_input: dict[Any, Any],
+    node_input: Annotated[dict[str, Any], Body(..., embed=True, default_factory=dict)],
     user_id: Annotated[str, Depends(get_user_id)],
     graph_version: Optional[int] = None,
 ) -> ExecuteGraphResponse:
@@ -549,7 +527,7 @@ def execute_graph(
         )
         return ExecuteGraphResponse(graph_exec_id=graph_exec.graph_exec_id)
     except Exception as e:
-        msg = e.__str__().encode().decode("unicode_escape")
+        msg = str(e).encode().decode("unicode_escape")
         raise HTTPException(status_code=400, detail=msg)
 
 
@@ -598,47 +576,6 @@ async def get_graph_run_node_execution_results(
         raise HTTPException(status_code=404, detail=f"Graph #{graph_id} not found.")
 
     return await execution_db.get_execution_results(graph_exec_id)
-
-
-########################################################
-##################### Templates ########################
-########################################################
-
-
-@v1_router.get(
-    path="/templates",
-    tags=["graphs", "templates"],
-    dependencies=[Depends(auth_middleware)],
-)
-async def get_templates(
-    user_id: Annotated[str, Depends(get_user_id)]
-) -> Sequence[graph_db.GraphModel]:
-    return await graph_db.get_graphs(filter_by="template", user_id=user_id)
-
-
-@v1_router.get(
-    path="/templates/{graph_id}",
-    tags=["templates", "graphs"],
-    dependencies=[Depends(auth_middleware)],
-)
-async def get_template(
-    graph_id: str, version: int | None = None
-) -> graph_db.GraphModel:
-    graph = await graph_db.get_graph(graph_id, version, template=True)
-    if not graph:
-        raise HTTPException(status_code=404, detail=f"Template #{graph_id} not found.")
-    return graph
-
-
-@v1_router.post(
-    path="/templates",
-    tags=["templates", "graphs"],
-    dependencies=[Depends(auth_middleware)],
-)
-async def create_new_template(
-    create_graph: CreateGraph, user_id: Annotated[str, Depends(get_user_id)]
-) -> graph_db.GraphModel:
-    return await do_create_graph(create_graph, is_template=True, user_id=user_id)
 
 
 ########################################################

@@ -206,13 +206,14 @@ def execute_node(
         #       This is fine because for now, there is no block that is charged by time.
         cost = db_client.spend_credits(data, input_size + output_size, 0)
 
+        outputs: dict[str, Any] = {}
         for output_name, output_data in node_block.execute(
             input_data, **extra_exec_kwargs
         ):
             output_size += len(json.dumps(output_data))
             log_metadata.info("Node produced output", **{output_name: output_data})
             db_client.upsert_execution_output(node_exec_id, output_name, output_data)
-
+            outputs[output_name] = output_data
             for execution in _enqueue_next_nodes(
                 db_client=db_client,
                 node=node,
@@ -230,6 +231,7 @@ def execute_node(
             user_id=user_id,
             type=NotificationType.AGENT_RUN,
             data=AgentRunData(
+                outputs=outputs,
                 agent_name=node_block.name,
                 credits_used=cost,
                 execution_time=0,
@@ -831,6 +833,7 @@ class ExecutionManager(AppService):
         data: BlockInput,
         user_id: str,
         graph_version: Optional[int] = None,
+        preset_id: str | None = None,
     ) -> GraphExecutionEntry:
         graph: GraphModel | None = self.db_client.get_graph(
             graph_id=graph_id, user_id=user_id, version=graph_version
@@ -852,9 +855,9 @@ class ExecutionManager(AppService):
 
             # Extract request input data, and assign it to the input pin.
             if block.block_type == BlockType.INPUT:
-                name = node.input_default.get("name")
-                if name in data.get("node_input", {}):
-                    input_data = {"value": data["node_input"][name]}
+                input_name = node.input_default.get("name")
+                if input_name and input_name in data:
+                    input_data = {"value": data[input_name]}
 
             # Extract webhook payload, and assign it to the input pin
             webhook_payload_key = f"webhook_{node.webhook_id}_payload"
@@ -879,6 +882,7 @@ class ExecutionManager(AppService):
             graph_version=graph.version,
             nodes_input=nodes_input,
             user_id=user_id,
+            preset_id=preset_id,
         )
 
         starting_node_execs = []

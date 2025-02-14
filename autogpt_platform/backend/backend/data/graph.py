@@ -70,11 +70,9 @@ class NodeModel(Node):
 
     @staticmethod
     def from_db(node: AgentNode):
-        if not node.AgentBlock:
-            raise ValueError(f"Invalid node {node.id}, invalid AgentBlock.")
         obj = NodeModel(
             id=node.id,
-            block_id=node.AgentBlock.id,
+            block_id=node.agentBlockId,
             input_default=type.convert(node.constantInput, dict[str, Any]),
             metadata=type.convert(node.metadata, dict[str, Any]),
             graph_id=node.agentGraphId,
@@ -534,7 +532,7 @@ async def get_execution(user_id: str, execution_id: str) -> GraphExecution | Non
 async def get_graph(
     graph_id: str,
     version: int | None = None,
-    template: bool = False,
+    template: bool = False,  # note: currently not in use; TODO: remove from DB entirely
     user_id: str | None = None,
     for_export: bool = False,
 ) -> GraphModel | None:
@@ -716,11 +714,9 @@ async def fix_llm_provider_credentials():
 
     store = IntegrationCredentialsStore()
 
-    broken_nodes = []
-    try:
-        broken_nodes = await prisma.get_client().query_raw(
-            """
-            SELECT    graph."userId"       user_id,
+    broken_nodes = await prisma.get_client().query_raw(
+        """
+        SELECT    graph."userId"       user_id,
                   node.id              node_id,
                   node."constantInput" node_preset_input
         FROM      platform."AgentNode"  node
@@ -729,10 +725,8 @@ async def fix_llm_provider_credentials():
         WHERE     node."constantInput"::jsonb->'credentials'->>'provider' = 'llm'
         ORDER BY  graph."userId";
         """
-        )
-        logger.info(f"Fixing LLM credential inputs on {len(broken_nodes)} nodes")
-    except Exception as e:
-        logger.error(f"Error fixing LLM credential inputs: {e}")
+    )
+    logger.info(f"Fixing LLM credential inputs on {len(broken_nodes)} nodes")
 
     user_id: str = ""
     user_integrations = None

@@ -22,7 +22,7 @@ class SpinTestServer:
         self.exec_manager = ExecutionManager()
         self.agent_server = AgentServer()
         self.scheduler = ExecutionScheduler()
-        self.notifications = NotificationManager()
+        self.notif_manager = NotificationManager()
 
     @staticmethod
     def test_get_user_id():
@@ -34,7 +34,7 @@ class SpinTestServer:
         self.agent_server.__enter__()
         self.exec_manager.__enter__()
         self.scheduler.__enter__()
-        self.notifications.__enter__()
+        self.notif_manager.__enter__()
 
         await db.connect()
         await initialize_blocks()
@@ -49,7 +49,7 @@ class SpinTestServer:
         self.exec_manager.__exit__(exc_type, exc_val, exc_tb)
         self.agent_server.__exit__(exc_type, exc_val, exc_tb)
         self.db_api.__exit__(exc_type, exc_val, exc_tb)
-        self.notifications.__exit__(exc_type, exc_val, exc_tb)
+        self.notif_manager.__exit__(exc_type, exc_val, exc_tb)
 
     def setup_dependency_overrides(self):
         # Override get_user_id for testing

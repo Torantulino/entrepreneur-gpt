@@ -81,18 +81,20 @@ services:
       - REDIS_PORT=6379
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
-      - RABBITMQ_USER=rabbitmq_user_default
-      - RABBITMQ_PASSWORD=k0VMxyIJF9S35f3x2uaw5IWAl6Y536O7
+      - RABBITMQ_DEFAULT_USER=rabbitmq_user_default
+      - RABBITMQ_DEFAULT_PASS=k0VMxyIJF9S35f3x2uaw5IWAl6Y536O7
       - REDIS_PASSWORD=password
       - ENABLE_AUTH=true
       - PYRO_HOST=0.0.0.0
       - EXECUTIONSCHEDULER_HOST=rest_server
       - EXECUTIONMANAGER_HOST=executor
+      - NOTIFICATIONMANAGER_HOST=rest_server
       - FRONTEND_BASE_URL=http://localhost:3000
       - BACKEND_CORS_ALLOW_ORIGINS=["http://localhost:3000"]
       - ENCRYPTION_KEY=dvziYgz0KSK8FENhju0ZYi8-fRTfAdlz6YLhdB_jhNw= # DO NOT USE IN PRODUCTION!!
     ports:
       - "8006:8006"
+      - "8007:8007"
       - "8003:8003" # execution scheduler
     networks:
       - app-network
@@ -127,11 +129,12 @@ services:
       - REDIS_PASSWORD=password
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
-      - RABBITMQ_USER=rabbitmq_user_default
-      - RABBITMQ_PASSWORD=k0VMxyIJF9S35f3x2uaw5IWAl6Y536O7
+      - RABBITMQ_DEFAULT_USER=rabbitmq_user_default
+      - RABBITMQ_DEFAULT_PASS=k0VMxyIJF9S35f3x2uaw5IWAl6Y536O7
       - ENABLE_AUTH=true
       - PYRO_HOST=0.0.0.0
       - AGENTSERVER_HOST=rest_server
+      - NOTIFICATIONMANAGER_HOST=rest_server
       - ENCRYPTION_KEY=dvziYgz0KSK8FENhju0ZYi8-fRTfAdlz6YLhdB_jhNw= # DO NOT USE IN PRODUCTION!!
     ports:
       - "8002:8000"
@@ -157,17 +160,17 @@ services:
       # rabbitmq:
       #   condition: service_healthy
       migrate:
-        condition: service_completed_successfully 
+        condition: service_completed_successfully
     environment:
       - SUPABASE_JWT_SECRET=your-super-secret-jwt-token-with-at-least-32-characters-long
       - DATABASE_URL=postgresql://postgres:your-super-secret-and-long-postgres-password@db:5432/postgres?connect_timeout=60&schema=platform
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=password
-      # - RABBITMQ_HOST=rabbitmq # TODO: Uncomment this when we have a need for it in websocket (like nofifying when stuff went down)
+      # - RABBITMQ_HOST=rabbitmq
       # - RABBITMQ_PORT=5672
-      # - RABBITMQ_USER=rabbitmq_user_default
-      # - RABBITMQ_PASSWORD=k0VMxyIJF9S35f3x2uaw5IWAl6Y536O7
+      # - RABBITMQ_DEFAULT_USER=rabbitmq_user_default
+      # - RABBITMQ_DEFAULT_PASS=k0VMxyIJF9S35f3x2uaw5IWAl6Y536O7
       - ENABLE_AUTH=true
       - PYRO_HOST=0.0.0.0
       - BACKEND_CORS_ALLOW_ORIGINS=["http://localhost:3000"]

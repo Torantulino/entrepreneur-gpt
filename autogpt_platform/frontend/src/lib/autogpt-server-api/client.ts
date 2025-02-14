@@ -176,10 +176,8 @@ export default class BackendAPI {
     return this._get(`/graphs/${id}/versions`);
   }
 
-  createGraph(graphCreateBody: GraphCreatable): Promise<Graph>;
-
-  createGraph(graphID: GraphCreatable | string): Promise<Graph> {
-    let requestBody = { graph: graphID } as GraphCreateRequestBody;
+  createGraph(graph: GraphCreatable): Promise<Graph> {
+    let requestBody = { graph } as GraphCreateRequestBody;
 
     return this._request("POST", "/graphs", requestBody);
   }

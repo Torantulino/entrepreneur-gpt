@@ -5,8 +5,9 @@ import fastapi.responses
 import pytest
 from prisma.models import User
 
+import backend.server.v2.library.model
 import backend.server.v2.store.model
-from backend.blocks.basic import FindInDictionaryBlock, StoreValueBlock
+from backend.blocks.basic import AgentInputBlock, FindInDictionaryBlock, StoreValueBlock
 from backend.blocks.maths import CalculatorBlock, Operation
 from backend.data import execution, graph
 from backend.server.model import CreateGraph
@@ -131,7 +132,7 @@ async def test_agent_execution(server: SpinTestServer):
     logger.info("Starting test_agent_execution")
     test_user = await create_test_user()
     test_graph = await create_graph(server, create_test_graph(), test_user)
-    data = {"node_input": {"input_1": "Hello", "input_2": "World"}}
+    data = {"input_1": "Hello", "input_2": "World"}
     graph_exec_id = await execute_graph(
         server.agent_server,
         test_graph,
@@ -296,6 +297,192 @@ async def test_static_input_link_on_graph(server: SpinTestServer):
 
 
 @pytest.mark.asyncio(scope="session")
+async def test_execute_preset(server: SpinTestServer):
+    """
+    Test executing a preset.
+
+    This test ensures that:
+    1. A preset can be successfully executed
+    2. The execution results are correct
+
+    Args:
+        server (SpinTestServer): The test server instance.
+    """
+    # Create test graph and user
+    nodes = [
+        graph.Node(  # 0
+            block_id=AgentInputBlock().id,
+            input_default={"name": "dictionary"},
+        ),
+        graph.Node(  # 1
+            block_id=AgentInputBlock().id,
+            input_default={"name": "selected_value"},
+        ),
+        graph.Node(  # 2
+            block_id=StoreValueBlock().id,
+            input_default={"input": {"key1": "Hi", "key2": "Everyone"}},
+        ),
+        graph.Node(  # 3
+            block_id=FindInDictionaryBlock().id,
+            input_default={"key": "", "input": {}},
+        ),
+    ]
+    links = [
+        graph.Link(
+            source_id=nodes[0].id,
+            sink_id=nodes[2].id,
+            source_name="result",
+            sink_name="input",
+        ),
+        graph.Link(
+            source_id=nodes[1].id,
+            sink_id=nodes[3].id,
+            source_name="result",
+            sink_name="key",
+        ),
+        graph.Link(
+            source_id=nodes[2].id,
+            sink_id=nodes[3].id,
+            source_name="output",
+            sink_name="input",
+        ),
+    ]
+    test_graph = graph.Graph(
+        name="TestGraph",
+        description="Test graph",
+        nodes=nodes,
+        links=links,
+    )
+    test_user = await create_test_user()
+    test_graph = await create_graph(server, test_graph, test_user)
+
+    # Create preset with initial values
+    preset = backend.server.v2.library.model.CreateLibraryAgentPresetRequest(
+        name="Test Preset With Clash",
+        description="Test preset with clashing input values",
+        agent_id=test_graph.id,
+        agent_version=test_graph.version,
+        inputs={
+            "dictionary": {"key1": "Hello", "key2": "World"},
+            "selected_value": "key2",
+        },
+        is_active=True,
+    )
+    created_preset = await server.agent_server.test_create_preset(preset, test_user.id)
+
+    # Execute preset with overriding values
+    result = await server.agent_server.test_execute_preset(
+        graph_id=test_graph.id,
+        graph_version=test_graph.version,
+        preset_id=created_preset.id,
+        user_id=test_user.id,
+    )
+
+    # Verify execution
+    assert result is not None
+    graph_exec_id = result["id"]
+
+    # Wait for execution to complete
+    executions = await wait_execution(test_user.id, test_graph.id, graph_exec_id)
+    assert len(executions) == 4
+
+    # FindInDictionaryBlock should wait for the input pin to be provided,
+    # Hence executing extraction of "key" from {"key1": "value1", "key2": "value2"}
+    assert executions[3].status == execution.ExecutionStatus.COMPLETED
+    assert executions[3].output_data == {"output": ["World"]}
+
+
+@pytest.mark.asyncio(scope="session")
+async def test_execute_preset_with_clash(server: SpinTestServer):
+    """
+    Test executing a preset with clashing input data.
+    """
+    # Create test graph and user
+    nodes = [
+        graph.Node(  # 0
+            block_id=AgentInputBlock().id,
+            input_default={"name": "dictionary"},
+        ),
+        graph.Node(  # 1
+            block_id=AgentInputBlock().id,
+            input_default={"name": "selected_value"},
+        ),
+        graph.Node(  # 2
+            block_id=StoreValueBlock().id,
+            input_default={"input": {"key1": "Hi", "key2": "Everyone"}},
+        ),
+        graph.Node(  # 3
+            block_id=FindInDictionaryBlock().id,
+            input_default={"key": "", "input": {}},
+        ),
+    ]
+    links = [
+        graph.Link(
+            source_id=nodes[0].id,
+            sink_id=nodes[2].id,
+            source_name="result",
+            sink_name="input",
+        ),
+        graph.Link(
+            source_id=nodes[1].id,
+            sink_id=nodes[3].id,
+            source_name="result",
+            sink_name="key",
+        ),
+        graph.Link(
+            source_id=nodes[2].id,
+            sink_id=nodes[3].id,
+            source_name="output",
+            sink_name="input",
+        ),
+    ]
+    test_graph = graph.Graph(
+        name="TestGraph",
+        description="Test graph",
+        nodes=nodes,
+        links=links,
+    )
+    test_user = await create_test_user()
+    test_graph = await create_graph(server, test_graph, test_user)
+
+    # Create preset with initial values
+    preset = backend.server.v2.library.model.CreateLibraryAgentPresetRequest(
+        name="Test Preset With Clash",
+        description="Test preset with clashing input values",
+        agent_id=test_graph.id,
+        agent_version=test_graph.version,
+        inputs={
+            "dictionary": {"key1": "Hello", "key2": "World"},
+            "selected_value": "key2",
+        },
+        is_active=True,
+    )
+    created_preset = await server.agent_server.test_create_preset(preset, test_user.id)
+
+    # Execute preset with overriding values
+    result = await server.agent_server.test_execute_preset(
+        graph_id=test_graph.id,
+        graph_version=test_graph.version,
+        preset_id=created_preset.id,
+        node_input={"selected_value": "key1"},
+        user_id=test_user.id,
+    )
+
+    # Verify execution
+    assert result is not None
+    graph_exec_id = result["id"]
+
+    # Wait for execution to complete
+    executions = await wait_execution(test_user.id, test_graph.id, graph_exec_id)
+    assert len(executions) == 4
+
+    # FindInDictionaryBlock should wait for the input pin to be provided,
+    # Hence executing extraction of "key" from {"key1": "value1", "key2": "value2"}
+    assert executions[3].status == execution.ExecutionStatus.COMPLETED
+    assert executions[3].output_data == {"output": ["Hello"]}
+
+
+@pytest.mark.asyncio(scope="session")
 async def test_store_listing_graph(server: SpinTestServer):
     logger.info("Starting test_agent_execution")
     test_user = await create_test_user()
@@ -344,7 +531,7 @@ async def test_store_listing_graph(server: SpinTestServer):
     )
     alt_test_user = admin_user
 
-    data = {"node_input": {"input_1": "Hello", "input_2": "World"}}
+    data = {"input_1": "Hello", "input_2": "World"}
     graph_exec_id = await execute_graph(
         server.agent_server,
         test_graph,
