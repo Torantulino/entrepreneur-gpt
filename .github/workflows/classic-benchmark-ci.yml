@@ -87,13 +87,20 @@ jobs:
           poetry run pytest -vv \
             --cov=agbenchmark --cov-branch --cov-report term-missing --cov-report xml \
             --durations=10 \
+            --junitxml=junit.xml -o junit_family=legacy \
             tests
         env:
           CI: true
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}  # Run even if tests fail
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: agbenchmark,${{ runner.os }}

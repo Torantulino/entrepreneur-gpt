@@ -139,6 +139,7 @@ jobs:
           poetry run pytest -vv \
             --cov=forge --cov-branch --cov-report term-missing --cov-report xml \
             --durations=10 \
+            --junitxml=junit.xml -o junit_family=legacy \
             forge
         env:
           CI: true
@@ -148,8 +149,14 @@ jobs:
           AWS_ACCESS_KEY_ID: minioadmin
           AWS_SECRET_ACCESS_KEY: minioadmin
 
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}  # Run even if tests fail
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: forge,${{ runner.os }}
