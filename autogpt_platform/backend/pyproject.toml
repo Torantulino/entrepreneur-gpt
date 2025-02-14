@@ -65,17 +65,17 @@ youtube-transcript-api = "^0.6.2"
 # NOTE: please insert new dependencies in their alphabetical location
 
 [tool.poetry.group.dev.dependencies]
-aiohappyeyeballs = "^2.4.4"
+aiohappyeyeballs = "^2.4.6"
 black = "^24.10.0"
 faker = "^33.3.1"
-httpx = "^0.27.0"
+httpx = "^0.28.1"
 isort = "^5.13.2"
-poethepoet = "^0.32.1"
-pyright = "^1.1.392"
+poethepoet = "^0.32.2"
+pyright = "^1.1.394"
 pytest-mock = "^3.14.0"
 pytest-watcher = "^0.4.2"
 requests = "^2.32.3"
-ruff = "^0.9.2"
+ruff = "^0.9.6"
 # NOTE: please insert new dependencies in their alphabetical location
 
 [build-system]
