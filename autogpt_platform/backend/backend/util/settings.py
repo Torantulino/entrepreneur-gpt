@@ -145,6 +145,11 @@ class Config(UpdateTrackingModel["Config"], BaseSettings):
         description="The port for notification service daemon to run on",
     )
 
+    otto_api_url: str = Field(
+        default="",
+        description="The URL for the Otto API service",
+    )
+
     platform_base_url: str = Field(
         default="",
         description="Must be set so the application knows where it's hosted at. "

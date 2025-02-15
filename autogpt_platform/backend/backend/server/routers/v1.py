@@ -56,6 +56,7 @@ from backend.server.model import (
     SetGraphActiveVersion,
     UpdatePermissionsRequest,
 )
+from backend.server.routers.otto.routes import otto_router
 from backend.server.utils import get_user_id
 from backend.util.service import get_service_client
 from backend.util.settings import Settings
@@ -96,6 +97,7 @@ v1_router.include_router(
     dependencies=[Depends(auth_middleware)],
 )
 
+v1_router.include_router(otto_router)
 
 ########################################################
 ##################### Auth #############################

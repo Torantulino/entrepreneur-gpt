@@ -56,7 +56,7 @@ const TallyPopupSimple = () => {
   };
 
   return (
-    <div className="fixed bottom-1 right-6 z-50 hidden select-none items-center gap-4 p-3 transition-all duration-300 ease-in-out md:flex">
+    <div className="fixed bottom-1 right-24 z-50 hidden select-none items-center gap-4 p-3 transition-all duration-300 ease-in-out md:flex">
       {show_tutorial && (
         <Button
           variant="default"
