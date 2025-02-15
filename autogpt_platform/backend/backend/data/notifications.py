@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, timedelta
 from enum import Enum
-from typing import Annotated, Generic, Optional, TypeVar, Union
+from typing import Annotated, Any, Generic, Optional, TypeVar, Union
 
 from prisma import Json
 from prisma.enums import NotificationType
@@ -35,10 +35,10 @@ class BaseNotificationData(BaseModel):
 class AgentRunData(BaseNotificationData):
     agent_name: str
     credits_used: float
-    # remaining_balance: float
     execution_time: float
-    graph_id: str
     node_count: int = Field(..., description="Number of nodes executed")
+    graph_id: str
+    outputs: dict[str, Any] = Field(..., description="Outputs of the agent")
 
 
 class ZeroBalanceData(BaseNotificationData):
@@ -201,6 +201,19 @@ class NotificationTypeOverride:
             NotificationType.DAILY_SUMMARY: "daily_summary.html",
             NotificationType.WEEKLY_SUMMARY: "weekly_summary.html",
             NotificationType.MONTHLY_SUMMARY: "monthly_summary.html",
+        }[self.notification_type]
+
+    @property
+    def subject(self) -> str:
+        return {
+            NotificationType.AGENT_RUN: "Agent Run Report",
+            NotificationType.ZERO_BALANCE: "You're out of credits!",
+            NotificationType.LOW_BALANCE: "Low Balance Warning!",
+            NotificationType.BLOCK_EXECUTION_FAILED: "Uh oh! Block Execution Failed",
+            NotificationType.CONTINUOUS_AGENT_ERROR: "Shoot! Continuous Agent Error",
+            NotificationType.DAILY_SUMMARY: "Here's your daily summary!",
+            NotificationType.WEEKLY_SUMMARY: "Look at all the cool stuff you did last week!",
+            NotificationType.MONTHLY_SUMMARY: "We did a lot this month!",
         }[self.notification_type]
 
 

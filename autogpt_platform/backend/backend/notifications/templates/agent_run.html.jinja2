@@ -1,0 +1,75 @@
+{# Agent Run #}
+{# Template variables:
+data.name: the name of the agent
+data.credits_used: the number of credits used by the agent
+data.node_count: the number of nodes the agent ran on
+data.execution_time: the time it took to run the agent
+data.graph_id: the id of the graph the agent ran on
+data.outputs: the dict[str, Any] of outputs of the agent
+#}
+<p style="
+    font-family: 'Poppins', sans-serif;
+    color: #070629;
+    font-size: 16px;
+    line-height: 165%;
+    margin-top: 0;
+    margin-bottom: 10px;
+  ">
+  Hi,
+</p>
+<p style="
+    font-family: 'Poppins', sans-serif;
+    color: #070629;
+    font-size: 16px;
+    line-height: 165%;
+    margin-top: 0;
+    margin-bottom: 10px;
+  ">
+  We've run your agent {{ data.name }} and it took {{ data.execution_time }} seconds to complete.
+</p>
+<p style="
+    font-family: 'Poppins', sans-serif;
+    color: #070629;
+    font-size: 16px;
+    line-height: 165%;
+    margin-top: 0;
+    margin-bottom: 10px;
+  ">
+  It ran on {{ data.node_count }} nodes and used {{ data.credits_used }} credits.
+</p>
+<ul style="
+    font-family: 'Poppins', sans-serif;
+    color: #070629;
+    font-size: 16px;
+    line-height: 165%;
+    margin-top: 0;
+    margin-bottom: 10px;
+  ">
+  It output the following:
+  {# jinja2 list iteration thorugh data.outputs #}
+  {% for key, value in data.outputs.items() %}
+  <li>{{ key }}: {{ value }}</li>
+  {% endfor %}
+</ul>
+<p style="
+    font-family: 'Poppins', sans-serif;
+    color: #070629;
+    font-size: 16px;
+    line-height: 165%;
+    margin-top: 0;
+    margin-bottom: 10px;
+  ">
+  Your feedback has been instrumental in shaping AutoGPT, and we couldn't have
+  done it without you. We look forward to continuing this journey together as we
+  bring AI-powered automation to the world.
+</p>
+<p style="
+    font-family: 'Poppins', sans-serif;
+    color: #070629;
+    font-size: 16px;
+    line-height: 165%;
+    margin-top: 0;
+    margin-bottom: 0;
+  ">
+  Thank you again for your time and support.
+</p>

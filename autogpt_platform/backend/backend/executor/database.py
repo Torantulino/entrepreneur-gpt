@@ -28,6 +28,7 @@ from backend.data.user import (
     get_active_user_ids_in_timerange,
     get_active_users_ids,
     get_user_by_id,
+    get_user_email_by_id,
     get_user_integrations,
     get_user_metadata,
     get_user_notification_preference,
@@ -105,6 +106,7 @@ class DatabaseManager(AppService):
         get_active_user_ids_in_timerange
     )
     get_user_by_id = exposed_run_and_wait(get_user_by_id)
+    get_user_email_by_id = exposed_run_and_wait(get_user_email_by_id)
     get_user_notification_preference = exposed_run_and_wait(
         get_user_notification_preference
     )

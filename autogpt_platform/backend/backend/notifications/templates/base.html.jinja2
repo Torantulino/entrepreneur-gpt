@@ -1,0 +1,352 @@
+{# Base Template #}
+{# Template variables:
+    data.message: the message to display in the email
+    data.title: the title of the email
+    data.unsubscribe_link: the link to unsubscribe from the email
+#}
+<!doctype html>
+<html lang="ltr" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+  <meta name="x-apple-disable-message-reformatting">
+  <!--[if !mso]>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <![endif]-->
+  <!--[if mso]>
+    <style>
+        * { font-family: sans-serif !important; }
+    </style>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+  <style type="text/css">
+    /* RESET STYLES */
+    html,
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .document {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+    }
+
+    img {
+      border: 0;
+      outline: none;
+      text-decoration: none;
+      -ms-interpolation-mode: bicubic;
+    }
+
+    table {
+      border-collapse: collapse;
+    }
+
+    table,
+    td {
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+    }
+
+    body,
+    table,
+    td,
+    a {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    p {
+      margin: 0;
+      word-break: break-word;
+    }
+
+    /* iOS BLUE LINKS */
+    a[x-apple-data-detectors] {
+      color: inherit !important;
+      text-decoration: none !important;
+      font-size: inherit !important;
+      font-family: inherit !important;
+      font-weight: inherit !important;
+      line-height: inherit !important;
+    }
+
+    /* ANDROID CENTER FIX */
+    div[style*="margin: 16px 0;"] {
+      margin: 0 !important;
+    }
+
+    /* MEDIA QUERIES */
+    @media all and (max-width:639px) {
+      .wrapper {
+        width: 100% !important;
+      }
+
+      .container {
+        width: 100% !important;
+        min-width: 100% !important;
+        padding: 0 !important;
+      }
+
+      .row {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+      }
+
+      .col-mobile {
+        width: 20px !important;
+      }
+
+      .col {
+        display: block !important;
+        width: 100% !important;
+      }
+
+      .mobile-center {
+        text-align: center !important;
+        float: none !important;
+      }
+
+      .mobile-mx-auto {
+        margin: 0 auto !important;
+        float: none !important;
+      }
+
+      .mobile-left {
+        text-align: center !important;
+        float: left !important;
+      }
+
+      .mobile-hide {
+        display: none !important;
+      }
+
+      .img {
+        width: 100% !important;
+        height: auto !important;
+      }
+
+      .ml-btn {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      .ml-btn-container {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+    }
+  </style>
+  <style type="text/css">
+    @import url("https://assets.mlcdn.com/fonts-v2.css?version=1729862");
+  </style>
+  <style type="text/css">
+    @media screen {
+      body {
+        font-family: 'Poppins', sans-serif;
+      }
+    }
+  </style>
+  <title>{{data.title}}</title>
+</head>
+
+<body style="margin: 0 !important; padding: 0 !important; background-color:#070629;">
+  <div class="document" role="article" aria-roledescription="email" aria-label lang dir="ltr"
+    style="background-color:#070629; line-height: 100%; font-size:medium; font-size:max(16px, 1rem);">
+    <!-- Main Content -->
+    <table width="100%" align="center" cellspacing="0" cellpadding="0" border="0">
+      <tr>
+        <td class="background" bgcolor="#070629" align="center" valign="top" style="padding: 0 8px;">
+          <!-- Email Content -->
+          <table class="container" align="center" width="640" cellpadding="0" cellspacing="0" border="0"
+            style="max-width: 640px;">
+            <tr>
+              <td align="center">
+                <!-- Logo Section -->
+                <table class="container ml-4 ml-default-border" width="640" bgcolor="#E2ECFD" align="center" border="0"
+                  cellspacing="0" cellpadding="0" style="width: 640px; min-width: 640px;">
+                  <tr>
+                    <td class="ml-default-border container" height="40" style="line-height: 40px; min-width: 640px;">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td class="row" align="center" style="padding: 0 50px;">
+                            <img
+                              src="https://storage.mlcdn.com/account_image/597379/8QJ8kOjXakVvfe1kJLY2wWCObU1mp5EiDLfBlbQa.png"
+                              border="0" alt="" width="120" class="logo"
+                              style="max-width: 120px; display: inline-block;">
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Main Content Section -->
+                <table class="container ml-6 ml-default-border" width="640" bgcolor="#E2ECFD" align="center" border="0"
+                  cellspacing="0" cellpadding="0" style="color: #070629; width: 640px; min-width: 640px;">
+                  <tr>
+                    <td class="row" style="padding: 0 50px;">
+                      {{data.message|safe}}
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Signature Section -->
+                <table class="container ml-8 ml-default-border" width="640" bgcolor="#E2ECFD" align="center" border="0"
+                  cellspacing="0" cellpadding="0" style="color: #070629; width: 640px; min-width: 640px;">
+                  <tr>
+                    <td class="row mobile-center" align="left" style="padding: 0 50px;">
+                      <table class="ml-8 wrapper" border="0" cellspacing="0" cellpadding="0"
+                        style="color: #070629; text-align: left;">
+                        <tr>
+                          <td class="col mobile-center" align="center" width="80">
+                            <img
+                              src="https://storage.mlcdn.com/account_image/597379/68W8w94Zwl52yQyrKdFERRquu2CivAcn17ST22HF.jpg"
+                              border="0" alt="" width="80" class="avatar"
+                              style="display: inline-block; max-width: 80px; border-radius: 80px;">
+                          </td>
+                          <td class="col" width="30" height="30" style="line-height: 30px;"></td>
+                          <td class="col center mobile-center" align>
+                            <p
+                              style="font-family: 'Poppins', sans-serif; color: #070629; font-size: 16px; line-height: 165%; margin-top: 0; margin-bottom: 0;">
+                              John Ababseh<br>Product Manager<br>
+                              <a href="mailto:john.ababseh@agpt.co" target="_blank"
+                                style="color: #4285F4; font-weight: normal; font-style: normal; text-decoration: underline;">john.ababseh@agpt.co</a>
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Footer Section -->
+                <table class="container ml-10 ml-default-border" width="640" bgcolor="#ffffff" align="center" border="0"
+                  cellspacing="0" cellpadding="0" style="width: 640px; min-width: 640px;">
+                  <tr>
+                    <td class="row" style="padding: 0 50px;">
+                      <table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td>
+                            <!-- Footer Content -->
+                            <table align="center" width="100%" border="0" cellspacing="0" cellpadding="0">
+                              <tr>
+                                <td class="col" align="left" valign="middle" width="120">
+                                  <img
+                                    src="https://storage.mlcdn.com/account_image/597379/8QJ8kOjXakVvfe1kJLY2wWCObU1mp5EiDLfBlbQa.png"
+                                    border="0" alt="" width="120" class="logo"
+                                    style="max-width: 120px; display: inline-block;">
+                                </td>
+                                <td class="col" width="40" height="30" style="line-height: 30px;"></td>
+                                <td class="col mobile-left" align="right" valign="middle" width="250">
+                                  <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                                    <tr>
+                                      <td align="center" valign="middle" width="18" style="padding: 0 5px 0 0;">
+                                        <a href="https://x.com/auto_gpt" target="blank" style="text-decoration: none;">
+                                          <img
+                                            src="https://assets.mlcdn.com/ml/images/icons/default/rounded_corners/black/x.png"
+                                            width="18" alt="x">
+                                        </a>
+                                      </td>
+                                      <td align="center" valign="middle" width="18" style="padding: 0 5px;">
+                                        <a href="https://discord.gg/autogpt" target="blank"
+                                          style="text-decoration: none;">
+                                          <img
+                                            src="https://assets.mlcdn.com/ml/images/icons/default/rounded_corners/black/discord.png"
+                                            width="18" alt="discord">
+                                        </a>
+                                      </td>
+                                      <td align="center" valign="middle" width="18" style="padding: 0 0 0 5px;">
+                                        <a href="https://agpt.co/" target="blank" style="text-decoration: none;">
+                                          <img
+                                            src="https://assets.mlcdn.com/ml/images/icons/default/rounded_corners/black/website.png"
+                                            width="18" alt="website">
+                                        </a>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td align="center" style="text-align: left!important;">
+                            <h5
+                              style="font-family: 'Poppins', sans-serif; color: #070629; font-size: 15px; line-height: 125%; font-weight: bold; font-style: normal; text-decoration: none; margin-bottom: 6px;">
+                              AutoGPT
+                            </h5>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td align="center" style="text-align: left!important;">
+                            <p
+                              style="font-family: 'Poppins', sans-serif; color: #070629; font-size: 14px; line-height: 150%; display: inline-block; margin-bottom: 0;">
+                              3rd Floor 1 Ashley Road, Cheshire, United Kingdom, WA14 2DT, Altrincham<br>United Kingdom
+                            </p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td height="8" style="line-height: 8px;"></td>
+                        </tr>
+                        <tr>
+                          <td align="left" style="text-align: left!important;">
+                            <p
+                              style="font-family: 'Poppins', sans-serif; color: #070629; font-size: 14px; line-height: 150%; display: inline-block; margin-bottom: 0;">
+                              You received this email because you signed up on our website.</p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td height="1" style="line-height: 12px;"></td>
+                        </tr>
+                        <tr>
+                          <td align="left">
+                            <p
+                              style="font-family: 'Poppins', sans-serif; color: #070629; font-size: 14px; line-height: 150%; display: inline-block; margin-bottom: 0;">
+                              <a href="{{data.unsubscribe_link}}"
+                                style="color: #4285F4; font-weight: normal; font-style: normal; text-decoration: underline;">Unsubscribe</a>
+                            </p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+
+</html>

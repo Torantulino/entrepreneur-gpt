@@ -206,13 +206,14 @@ def execute_node(
         #       This is fine because for now, there is no block that is charged by time.
         cost = db_client.spend_credits(data, input_size + output_size, 0)
 
+        outputs: dict[str, Any] = {}
         for output_name, output_data in node_block.execute(
             input_data, **extra_exec_kwargs
         ):
             output_size += len(json.dumps(output_data))
             log_metadata.info("Node produced output", **{output_name: output_data})
             db_client.upsert_execution_output(node_exec_id, output_name, output_data)
-
+            outputs[output_name] = output_data
             for execution in _enqueue_next_nodes(
                 db_client=db_client,
                 node=node,
@@ -230,6 +231,7 @@ def execute_node(
             user_id=user_id,
             type=NotificationType.AGENT_RUN,
             data=AgentRunData(
+                outputs=outputs,
                 agent_name=node_block.name,
                 credits_used=cost,
                 execution_time=0,
