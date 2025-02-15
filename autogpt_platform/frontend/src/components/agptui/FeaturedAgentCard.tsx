@@ -27,16 +27,20 @@ export const FeaturedAgentCard: React.FC<FeaturedStoreCardProps> = ({
       data-testid="featured-store-card"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={backgroundColor}
+      className={`flex h-[482px] w-[440px] flex-col ${backgroundColor}`}
     >
-      <CardHeader>
-        <CardTitle>{agent.agent_name}</CardTitle>
-        <CardDescription>{agent.description}</CardDescription>
+      <CardHeader className="flex-none space-y-3 pb-2">
+        <CardTitle className="text-xl leading-tight">
+          {agent.agent_name}
+        </CardTitle>
+        <CardDescription className="text-sm">
+          By {agent.creator}
+        </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="relative h-[397px] w-full overflow-hidden rounded-xl">
+      <CardContent className="relative flex-1 p-4">
+        <div className="absolute inset-0 m-4 overflow-hidden rounded-xl">
           <div
-            className={`transition-opacity duration-200 ${isHovered ? "opacity-0" : "opacity-100"}`}
+            className={`h-full w-full transition-opacity duration-200 ${isHovered ? "opacity-0" : "opacity-100"}`}
           >
             <Image
               src={agent.agent_image || "/AUTOgpt_Logo_dark.png"}
@@ -47,17 +51,17 @@ export const FeaturedAgentCard: React.FC<FeaturedStoreCardProps> = ({
             />
           </div>
           <div
-            className={`absolute inset-0 overflow-y-auto transition-opacity duration-200 ${
+            className={`absolute inset-0 overflow-y-auto p-4 transition-opacity duration-200 ${
               isHovered ? "opacity-100" : "opacity-0"
-            } rounded-xl dark:bg-neutral-700`}
+            }`}
           >
-            <p className="text-base text-neutral-800 dark:text-neutral-200">
+            <CardDescription className="line-clamp-[11] text-sm leading-relaxed text-muted-foreground">
               {agent.description}
-            </p>
+            </CardDescription>
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex items-center justify-between">
+      <CardFooter className="flex h-[60px] flex-none items-center justify-between">
         <div className="font-semibold">
           {agent.runs?.toLocaleString() ?? "0"} runs
         </div>
