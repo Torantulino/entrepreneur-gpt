@@ -8,6 +8,7 @@ const PROTECTED_PAGES = [
   "/marketplace/profile",
   "/marketplace/settings",
   "/marketplace/dashboard",
+  "/onboarding",
 ];
 const ADMIN_PAGES = ["/admin"];
 
