@@ -19,7 +19,7 @@ import {
   BlockIOBooleanSubSchema,
   BlockIOSimpleTypeSubSchema,
 } from "@/lib/autogpt-server-api/types";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, { useRef, FC, useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 import {
@@ -1303,21 +1303,60 @@ export const NodeTextBoxInput: FC<{
   className,
   displayName,
 }) => {
-  value ||= schema.default || "";
+  //value ||= schema.default || "";
+
+  // ADDED NEW CHANGES
+
+   // Initialize local state with the current value or the schema default
+   const [localValue, setLocalValue] = useState(value || schema.default || "");
+
+   // Whenever the external value changes, update the local state.
+   useEffect(() => {
+     setLocalValue(value || schema.default || "");
+   }, [value, schema.default]);
+ 
+   // Update local state on every keystroke
+   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+     setLocalValue(e.target.value);
+   };
+ 
+   // When editing is finished (on blur), update the parent's state.
+   const onBlur = () => {
+     handleInputChange(selfKey, localValue);
+   };
+ 
+   // Create a ref for the textarea.
+   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
   return (
     <div className={className}>
       <div
         className="nodrag relative m-0 h-[200px] w-full bg-yellow-100 p-4 dark:bg-yellow-900"
-        onClick={schema.secret ? () => handleInputClick(selfKey) : undefined}
+        //onClick={schema.secret ? () => handleInputClick(selfKey) : undefined}
+        // ADDED THIS
+        onClick={() => {
+          if (!schema.secret) {
+            // Focus the textarea when the container is clicked.
+            textareaRef.current?.focus();
+          } else {
+            // For secret fields, use the custom click handler.
+            handleInputClick(selfKey);
+          }
+        }}
+
       >
         <textarea
+          ref={textareaRef}
           id={selfKey}
-          value={schema.secret && value ? "********" : value}
+          value={schema.secret && value ? "********" : localValue}
           readOnly={schema.secret}
           placeholder={
             schema?.placeholder || `Enter ${beautifyString(displayName)}`
           }
-          onChange={(e) => handleInputChange(selfKey, e.target.value)}
+          //onChange={(e) => handleInputChange(selfKey, e.target.value)}
+          // ADDED THIS
+          onChange = {onChange}
+          onBlur = {onBlur}
           className="h-full w-full resize-none overflow-hidden border-none bg-transparent text-lg text-black outline-none dark:text-white"
           style={{
             fontSize: "min(1em, 16px)",
